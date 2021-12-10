@@ -1,0 +1,583 @@
+openapi: 3.0.0
+info:
+  title: McApi
+  description: Here lies the definitions for all the routes that are available in the McAPI backend.
+  contact:
+    name: Omar Sagoo
+    email: osagoo@masterycoding.com
+  version: 1.0.0
+paths:
+  /users/register:
+    post:
+      tags:
+        - User
+      description: Registers a user with the given userType!
+      summary: Register a user with the given paramaters
+      operationId: RegisterUser
+      requestBody:
+        description: user to add to the system.
+        content:
+          application/json:
+            schema:
+              anyOf:
+                - $ref: '#/components/schemas/MCAdmin'   
+                - $ref: '#/components/schemas/Sales' 
+                - $ref: '#/components/schemas/DistrictAdmin'
+                - $ref: '#/components/schemas/SchoolAdmin'
+                - $ref: '#/components/schemas/Teacher'
+                - $ref: '#/components/schemas/Student'
+            examples:
+              MC_ADMIN:
+                summary: MC_ADMIN Example
+                value:
+                  username: test@admin.com
+                  firstname: test
+                  lastname: admin
+                  userType: MC_ADMIN
+              SALES:
+                summary: SALES Example
+                value:
+                  username: sales@masterycoding.com
+                  firstname: MC
+                  lastname: Sales
+                  userType: SALES
+              DISTRICT_ADMIN:
+                summary: DISTRICT_ADMIN Example
+                value:
+                  username: DA@masterycoding.com
+                  firstname: DA
+                  lastname: Test
+                  userType: DISTRICT_ADMIN
+                  district: 618e7d6dd8544854234f11a7
+              SCHOOL_ADMIN:
+                summary: SCHOOL_ADMIN Example
+                value:
+                  username: SA@masterycoding.com
+                  firstname: SA
+                  lastname: Test
+                  userType: SCHOOL_ADMIN
+                  district: 618e7d6dd8544854234f11a7
+                  school: 619da3a60aa189cb396c9831
+              TEACHER:
+                summary: TEACHER Example
+                value:
+                  username: teacher@masterycoding.com
+                  firstname: Test
+                  lastname: Teacher
+                  userType: TEACHER
+                  district: 618e7d6dd8544854234f11a7
+                  school: 619da3a60aa189cb396c9831
+      responses:
+        '200':
+          description: The ID of the created user.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: The ID of the created User.
+        '400':
+          description: Invalid Input.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+        '403':
+          description: The User already exists.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+        '404':
+          description: Either School or district was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+  /users/activate:
+    patch:
+      tags:
+        - User
+      description: Activates a user!
+      summary: Activate a user with the given paramaters
+      operationId: ActivateUser
+      requestBody:
+        description: user to activate.
+        content:
+          application/json:
+            schema:
+              anyOf:
+                - $ref: '#/components/schemas/MCAdmin'   
+                - $ref: '#/components/schemas/Sales' 
+                - $ref: '#/components/schemas/DistrictAdmin'
+                - $ref: '#/components/schemas/SchoolAdmin'
+                - $ref: '#/components/schemas/Teacher'
+                - $ref: '#/components/schemas/Student'
+            examples:
+              Password-activation:
+                summary: Activation of a user with a password example
+                value:
+                  username: test@admin.com
+                  firstname: test
+                  lastname: admin
+                  password: TestPassword1!
+              googleOAuth-example:
+                summary: google OAuth SSO activation Example
+                value:
+                  username: test@masterycoding.com
+                  googleOAuth: <SOME_GOOGLE_TOKEN>
+                  usingGoogleOAuth: true
+              cleverOAuth-example:
+                summary: Clever OAuth SSO activation Example
+                value:
+                  username: test@masterycoding.com
+                  firstname: test
+                  lastname: admin
+                  cleverOAuth: <SOME_CLEVER_TOKEN>
+                  usingCleverOAuth: true
+      responses:
+        '200':
+          description: Success Message.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: User successfully activated.
+        '400':
+          description: Invalid Input.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+        '403':
+          description: The User is already activated.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+        '404':
+          description: The User was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+  /users/authenticate:
+    patch:
+      tags:
+        - User
+      description: Authenticate a user!
+      summary: Authenticate a user with the given username and password
+      operationId: AuthenticateUser
+      requestBody:
+        description: user to Authenticate.
+        content:
+          application/json:
+            schema:
+              anyOf:
+                - $ref: '#/components/schemas/MCAdmin'   
+                - $ref: '#/components/schemas/Sales' 
+                - $ref: '#/components/schemas/DistrictAdmin'
+                - $ref: '#/components/schemas/SchoolAdmin'
+                - $ref: '#/components/schemas/Teacher'
+                - $ref: '#/components/schemas/Student'
+            examples:
+              Authenticate:
+                summary: Authentication of a user with a password example
+                value:
+                  username: test@admin.com
+                  password: TestPassword1!
+      responses:
+        '200':
+          description: Success Message.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Message of the response from the server, if not authenticated this provides an explanation as to why..
+                  authenticated:
+                    type: boolean
+                    description: If the user was authenticated or not.
+                  accessToken:
+                    type: string
+                    description: JWT token created by the backend that stores the users permissions. Used to authenticate requests.
+                  userID:
+                    type: string
+                    description: The ID of the user that was authenticated.
+              examples:
+                success:
+                  summary: An example of a Success Response
+                  value:
+                    authenticated: true
+                    userID: 61b26a2ce7b420b6fe3e1a72
+                    accessToken: <SOME_JWT_TOKEN>
+                    message: Success.
+                incorrect-password:
+                  summary: An example of an incorrect password Response
+                  value:
+                    authenticated: false
+                    message: Incorrect username and/or password!
+                non-active-account:
+                  summary: An example of a Response for authenticating a non-active user.
+                  value:
+                    authenticated: false
+                    message: This account is not yet activated!
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+  /users/password/update:
+    patch:
+      tags:
+        - User
+      description: Update the password for a user!
+      summary: Update the password for a user with the given username
+      operationId: UpdatePassword
+      requestBody:
+        description: user to update.
+        content:
+          application/json:
+            schema:
+              anyOf:
+                - $ref: '#/components/schemas/MCAdmin'   
+                - $ref: '#/components/schemas/Sales' 
+                - $ref: '#/components/schemas/DistrictAdmin'
+                - $ref: '#/components/schemas/SchoolAdmin'
+                - $ref: '#/components/schemas/Teacher'
+                - $ref: '#/components/schemas/Student'
+            examples:
+              Password-update:
+                summary: update a user with a password example
+                value:
+                  username: test@admin.com
+                  oldPassword: TestPassword1!
+                  newPassword: NewPassword123!
+      responses:
+        '200':
+          description: Success Message.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Password changed successfully!
+              examples:
+                success:
+                  summary: An example of a Success Response for updating a users password
+                  value:
+                    message: Password changed successfully!
+        '400':
+          description: Invalid Input.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+        '403':
+          description: Incorrect username or password.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+  /users/{id}:
+    get:
+      tags:
+        - User
+      description: Get a user with the given User ID!
+      summary: Get a user with the given ID from the query paramaters
+      operationId: GetUserByID
+      parameters: 
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: user response
+          content:
+            application/json:
+              schema:
+                anyOf:
+                  - $ref: '#/components/schemas/MCAdmin'   
+                  - $ref: '#/components/schemas/Sales' 
+                  - $ref: '#/components/schemas/DistrictAdmin'
+                  - $ref: '#/components/schemas/SchoolAdmin'
+                  - $ref: '#/components/schemas/Teacher'
+                  - $ref: '#/components/schemas/Student'
+        '404':
+          description: User not found!
+          content:
+            text/html:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+        '500':
+          description: Internal Server Error.!
+          content:
+            text/html:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+  /users/{id}/archive:
+    patch:
+      tags:
+        - User
+      description: archive/de-archive a user!
+      summary: archive/de-archive a user with the given paramaters
+      operationId: ArchiveUser
+      parameters: 
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success Message.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: User successfully archived/un-archived.
+        '400':
+          description: Invalid Input.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+        '404':
+          description: The User was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+  /users/{id}/delete:
+    patch:
+      tags:
+        - User
+      description: Delete a user!
+      summary: Delete a user with the given paramaters
+      operationId: DeleteUser
+      parameters: 
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Success Message.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: User deleted successfully!
+        '400':
+          description: Invalid Input.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+        '404':
+          description: The User was not found.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+        '500':
+          description: Internal Server Error.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorModel'
+components:
+  schemas:
+    ErrorModel:
+      type: object
+      properties:
+        message:
+          type: string
+          description: A message that describes the error
+    User:
+      type: object
+      discriminator:
+        propertyName: userType
+      properties:
+        username:
+          type: string
+        firstname:
+          type: string
+        lastname:
+          type: string
+        password:
+          type: string
+        userType:
+          type: string
+          enum:
+            - MC_ADMIN
+            - SALES
+            - DISTRICT_ADMIN
+            - SCHOOL_ADMIN
+            - TEACHER
+            - STUDENT
+        usingGoogleOAuth:
+          type: boolean
+          default: false
+        usingCleverOAuth:
+          type: boolean
+          default: false
+        googleOAuth:
+          type: string
+        cleverOAuth:
+          type: string
+        activated:
+          type: boolean
+          default: false
+        archived:
+          type: boolean
+          default: false
+      required:
+        - username
+        - userType
+    MCAdmin:
+      description: A representation of a MC_ADMIN. Note that `MCAdmin` will be used as the discriminator value.
+      allOf:
+        - $ref: '#/components/schemas/User'
+    Sales:
+      description: A representation of a SALES. Note that `Sales` will be used as the discriminator value.
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            contact:
+              type: string
+            districts:
+              type: array
+              description: The IDs of the district that this user is a part of
+              items:
+                type: string
+    DistrictAdmin:
+      description: A representation of a DISTRICT_ADMIN. Note that `DistrictAdmin` will be used as the discriminator value.
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            contact:
+              type: string
+            district:
+              type: string
+              description: The ID of the district that this user is a part of
+          required:
+            - district
+    SchoolAdmin:
+      description: A representation of a SCHOOL_ADMIN. Note that `SchoolAdmin` will be used as the discriminator value.
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            contact:
+              type: string
+            district:
+              type: string
+              description: The ID of the district that this user is a part of
+            school:
+              type: string
+              description: The ID of the school that this user is a part of
+          required:
+            - district
+            - school
+    Teacher:
+      description: A representation of a TEACHER. Note that `Teacher` will be used as the discriminator value.
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            district:
+              type: string
+              description: The ID of the district that this user is a part of
+            school:
+              type: string
+              description: The ID of the school that this user is a part of
+            classrooms:
+              type: array
+              items:
+                type: object
+                properties:
+                  classroom:
+                    type: string
+                    description: The ID of the classroom that this user is a part of
+                required:
+                  - classroom
+          required:
+            - district
+            - school
+    Student:
+      description: A representation of a STUDENT. Note that `Student` will be used as the discriminator value.
+      allOf:
+        - $ref: '#/components/schemas/User'
+        - type: object
+          properties:
+            district:
+              type: string
+              description: The ID of the district that this user is a part of
+            school:
+              type: string
+              description: The ID of the school that this user is a part of
+            classrooms:
+              type: array
+              items:
+                type: object
+                properties:
+                  classroom:
+                    type: string
+                    description: The ID of the classroom that this user is a part of
+                  addedBy:
+                    type: string
+                    description: The first and lastname or the username of the user that added the student into the classroom
+                required:
+                  - classroom
+            createdBy:
+              type: string
+              description: The first and lastname or the username of the user that added the student into the classroom
+          required:
+            - district
+            - school

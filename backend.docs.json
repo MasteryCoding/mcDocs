@@ -1,7 +1,7 @@
 {
+  "openapi": "3.0.0",
   "info": {
     "title": "McApi",
-    "summary": "The API for all of Mastery Codings Backend Routes.",
     "description": "Here lies the definitions for all the routes that are available in the McAPI backend.",
     "contact": {
       "name": "Omar Sagoo",
@@ -12,7 +12,9 @@
   "paths": {
     "/users/register": {
       "post": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "description": "Registers a user with the given userType!",
         "summary": "Register a user with the given paramaters",
         "operationId": "RegisterUser",
@@ -21,11 +23,30 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/User"
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/MCAdmin"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Sales"
+                  },
+                  {
+                    "$ref": "#/components/schemas/DistrictAdmin"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SchoolAdmin"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Teacher"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Student"
+                  }
+                ]
               },
               "examples": {
                 "MC_ADMIN": {
-                  "summary": "MC_ADMIN Example", 
+                  "summary": "MC_ADMIN Example",
                   "value": {
                     "username": "test@admin.com",
                     "firstname": "test",
@@ -34,7 +55,7 @@
                   }
                 },
                 "SALES": {
-                  "summary": "SALES Example", 
+                  "summary": "SALES Example",
                   "value": {
                     "username": "sales@masterycoding.com",
                     "firstname": "MC",
@@ -43,7 +64,7 @@
                   }
                 },
                 "DISTRICT_ADMIN": {
-                  "summary": "DISTRICT_ADMIN Example", 
+                  "summary": "DISTRICT_ADMIN Example",
                   "value": {
                     "username": "DA@masterycoding.com",
                     "firstname": "DA",
@@ -53,7 +74,7 @@
                   }
                 },
                 "SCHOOL_ADMIN": {
-                  "summary": "SCHOOL_ADMIN Example", 
+                  "summary": "SCHOOL_ADMIN Example",
                   "value": {
                     "username": "SA@masterycoding.com",
                     "firstname": "SA",
@@ -64,7 +85,7 @@
                   }
                 },
                 "TEACHER": {
-                  "summary": "TEACHER Example", 
+                  "summary": "TEACHER Example",
                   "value": {
                     "username": "teacher@masterycoding.com",
                     "firstname": "Test",
@@ -138,9 +159,11 @@
         }
       }
     },
-    "/users/activate":{
+    "/users/activate": {
       "patch": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "description": "Activates a user!",
         "summary": "Activate a user with the given paramaters",
         "operationId": "ActivateUser",
@@ -149,11 +172,30 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/User"
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/MCAdmin"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Sales"
+                  },
+                  {
+                    "$ref": "#/components/schemas/DistrictAdmin"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SchoolAdmin"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Teacher"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Student"
+                  }
+                ]
               },
               "examples": {
                 "Password-activation": {
-                  "summary": "Activation of a user with a password example", 
+                  "summary": "Activation of a user with a password example",
                   "value": {
                     "username": "test@admin.com",
                     "firstname": "test",
@@ -162,7 +204,7 @@
                   }
                 },
                 "googleOAuth-example": {
-                  "summary": "google OAuth SSO activation Example", 
+                  "summary": "google OAuth SSO activation Example",
                   "value": {
                     "username": "test@masterycoding.com",
                     "googleOAuth": "<SOME_GOOGLE_TOKEN>",
@@ -170,7 +212,7 @@
                   }
                 },
                 "cleverOAuth-example": {
-                  "summary": "Clever OAuth SSO activation Example", 
+                  "summary": "Clever OAuth SSO activation Example",
                   "value": {
                     "username": "test@masterycoding.com",
                     "firstname": "test",
@@ -243,9 +285,11 @@
         }
       }
     },
-    "/users/authenticate":{
+    "/users/authenticate": {
       "patch": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "description": "Authenticate a user!",
         "summary": "Authenticate a user with the given username and password",
         "operationId": "AuthenticateUser",
@@ -254,11 +298,30 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/User"
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/MCAdmin"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Sales"
+                  },
+                  {
+                    "$ref": "#/components/schemas/DistrictAdmin"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SchoolAdmin"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Teacher"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Student"
+                  }
+                ]
               },
               "examples": {
                 "Authenticate": {
-                  "summary": "Authentication of a user with a password example", 
+                  "summary": "Authentication of a user with a password example",
                   "value": {
                     "username": "test@admin.com",
                     "password": "TestPassword1!"
@@ -337,7 +400,9 @@
     },
     "/users/password/update": {
       "patch": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "description": "Update the password for a user!",
         "summary": "Update the password for a user with the given username",
         "operationId": "UpdatePassword",
@@ -346,11 +411,30 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/User"
+                "anyOf": [
+                  {
+                    "$ref": "#/components/schemas/MCAdmin"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Sales"
+                  },
+                  {
+                    "$ref": "#/components/schemas/DistrictAdmin"
+                  },
+                  {
+                    "$ref": "#/components/schemas/SchoolAdmin"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Teacher"
+                  },
+                  {
+                    "$ref": "#/components/schemas/Student"
+                  }
+                ]
               },
               "examples": {
                 "Password-update": {
-                  "summary": "update a user with a password example", 
+                  "summary": "update a user with a password example",
                   "value": {
                     "username": "test@admin.com",
                     "oldPassword": "TestPassword1!",
@@ -421,17 +505,48 @@
     },
     "/users/{id}": {
       "get": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "description": "Get a user with the given User ID!",
         "summary": "Get a user with the given ID from the query paramaters",
         "operationId": "GetUserByID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "user response",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/User"
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/MCAdmin"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Sales"
+                    },
+                    {
+                      "$ref": "#/components/schemas/DistrictAdmin"
+                    },
+                    {
+                      "$ref": "#/components/schemas/SchoolAdmin"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Teacher"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Student"
+                    }
+                  ]
                 }
               }
             }
@@ -457,22 +572,26 @@
             }
           }
         }
-      },
-      "paramaters": [
-        {
-          "name": "id",
-          "in": "path",
-          "description": "ID of user to get",
-          "required": true
-        }
-      ]
+      }
     },
     "/users/{id}/archive": {
       "patch": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "description": "archive/de-archive a user!",
         "summary": "archive/de-archive a user with the given paramaters",
         "operationId": "ArchiveUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success Message.",
@@ -521,22 +640,26 @@
             }
           }
         }
-      },
-      "paramaters": [
-        {
-          "name": "id",
-          "in": "path",
-          "description": "ID of user to archive",
-          "required": true
-        }
-      ]
+      }
     },
     "/users/{id}/delete": {
       "patch": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "description": "Delete a user!",
         "summary": "Delete a user with the given paramaters",
         "operationId": "DeleteUser",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "Success Message.",
@@ -585,15 +708,7 @@
             }
           }
         }
-      },
-      "paramaters": [
-        {
-          "name": "id",
-          "in": "path",
-          "description": "ID of user to delete",
-          "required": true
-        }
-      ]
+      }
     }
   },
   "components": {
@@ -627,7 +742,14 @@
           },
           "userType": {
             "type": "string",
-            "enum": ["MC_ADMIN", "SALES", "DISTRICT_ADMIN", "SCHOOL_ADMIN", "TEACHER", "STUDENT"]
+            "enum": [
+              "MC_ADMIN",
+              "SALES",
+              "DISTRICT_ADMIN",
+              "SCHOOL_ADMIN",
+              "TEACHER",
+              "STUDENT"
+            ]
           },
           "usingGoogleOAuth": {
             "type": "boolean",
@@ -652,7 +774,10 @@
             "default": false
           }
         },
-        "required": ["username", "userType"]
+        "required": [
+          "username",
+          "userType"
+        ]
       },
       "MCAdmin": {
         "description": "A representation of a MC_ADMIN. Note that `MCAdmin` will be used as the discriminator value.",
@@ -702,7 +827,9 @@
                 "description": "The ID of the district that this user is a part of"
               }
             },
-            "required": ["district"]
+            "required": [
+              "district"
+            ]
           }
         ]
       },
@@ -727,7 +854,10 @@
                 "description": "The ID of the school that this user is a part of"
               }
             },
-            "required": ["district", "school"]
+            "required": [
+              "district",
+              "school"
+            ]
           }
         ]
       },
@@ -758,11 +888,16 @@
                       "description": "The ID of the classroom that this user is a part of"
                     }
                   },
-                  "required": ["classroom"]
+                  "required": [
+                    "classroom"
+                  ]
                 }
               }
             },
-            "required": ["district", "school"]
+            "required": [
+              "district",
+              "school"
+            ]
           }
         ]
       },
@@ -797,7 +932,9 @@
                       "description": "The first and lastname or the username of the user that added the student into the classroom"
                     }
                   },
-                  "required": ["classroom"]
+                  "required": [
+                    "classroom"
+                  ]
                 }
               },
               "createdBy": {
@@ -805,7 +942,10 @@
                 "description": "The first and lastname or the username of the user that added the student into the classroom"
               }
             },
-            "required": ["district", "school"]
+            "required": [
+              "district",
+              "school"
+            ]
           }
         ]
       }
