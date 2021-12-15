@@ -23,7 +23,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "anyOf": [
+                "oneOf": [
                   {
                     "$ref": "#/components/schemas/MCAdmin"
                   },
@@ -112,6 +112,14 @@
                       "description": "The ID of the created User."
                     }
                   }
+                },
+                "examples": {
+                  "register-user": {
+                    "summary": "Successful registration",
+                    "value": {
+                      "id": "61a94498b5a61cb26e8b39bf"
+                    }
+                  }
                 }
               }
             }
@@ -122,16 +130,38 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "userType": {
+                    "$ref": "#/components/examples/InvalidUserType"
+                  },
+                  "username": {
+                    "$ref": "#/components/examples/invalidUsername"
+                  },
+                  "email": {
+                    "$ref": "#/components/examples/InvalidEmail"
+                  },
+                  "district": {
+                    "$ref": "#/components/examples/InvalidDistrict"
+                  },
+                  "school": {
+                    "$ref": "#/components/examples/InvalidSchool"
+                  }
                 }
               }
             }
           },
           "403": {
-            "description": "The User already exists.",
+            "description": "Forbidden request",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "exists": {
+                    "$ref": "#/components/examples/UserAlreadyExists"
+                  }
                 }
               }
             }
@@ -142,6 +172,14 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "DistrictNotFound": {
+                    "$ref": "#/components/examples/DistrictNotFound"
+                  },
+                  "SchoolNotFound": {
+                    "$ref": "#/components/examples/SchoolNotFound"
+                  }
                 }
               }
             }
@@ -238,6 +276,14 @@
                       "description": "User successfully activated."
                     }
                   }
+                },
+                "examples": {
+                  "register-example": {
+                    "summary": "Activation example",
+                    "value": {
+                      "message": "User successfully activated."
+                    }
+                  }
                 }
               }
             }
@@ -248,16 +294,29 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidActivation": {
+                    "$ref": "#/components/examples/InvalidActivation"
+                  },
+                  "InvalidOAuth": {
+                    "$ref": "#/components/examples/InvalidOAuth"
+                  }
                 }
               }
             }
           },
           "403": {
-            "description": "The User is already activated.",
+            "description": "Forbidden request",
             "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "alreadyActive": {
+                    "$ref": "#/components/examples/UserAlreadyActive"
+                  }
                 }
               }
             }
@@ -268,6 +327,11 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "notFound": {
+                    "$ref": "#/components/examples/UserNotFound"
+                  }
                 }
               }
             }
@@ -476,6 +540,14 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "noUserOrPassword": {
+                    "summary": "no username/password",
+                    "value": {
+                      "message": "Please provide a username and/or password"
+                    }
+                  }
                 }
               }
             }
@@ -486,6 +558,14 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "notActive": {
+                    "$ref": "#/components/examples/UserNotActive"
+                  },
+                  "incorrectUserOrPassword": {
+                    "$ref": "#/components/examples/IncorrectUsernameOrPassword"
+                  }
                 }
               }
             }
@@ -523,7 +603,7 @@
         ],
         "responses": {
           "200": {
-            "description": "user response",
+            "description": "Success response",
             "content": {
               "application/json": {
                 "schema": {
@@ -547,6 +627,26 @@
                       "$ref": "#/components/schemas/Student"
                     }
                   ]
+                },
+                "examples": {
+                  "student": {
+                    "$ref": "#/components/examples/Student"
+                  },
+                  "teacher": {
+                    "$ref": "#/components/examples/Teacher"
+                  },
+                  "sales": {
+                    "$ref": "#/components/examples/Sales"
+                  },
+                  "MCAdmin": {
+                    "$ref": "#/components/examples/MCAdmin"
+                  },
+                  "DistrictAdmin": {
+                    "$ref": "#/components/examples/DistrictAdmin"
+                  },
+                  "SchoolAdmin": {
+                    "$ref": "#/components/examples/SchoolAdmin"
+                  }
                 }
               }
             }
@@ -557,6 +657,11 @@
               "text/html": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "notFound": {
+                    "$ref": "#/components/examples/UserNotFound"
+                  }
                 }
               }
             }
@@ -579,8 +684,8 @@
         "tags": [
           "User"
         ],
-        "description": "archive/de-archive a user!",
-        "summary": "archive/de-archive a user with the given paramaters",
+        "description": "archive/restore a user!",
+        "summary": "archive/restore a user with the given paramaters",
         "operationId": "ArchiveUser",
         "parameters": [
           {
@@ -594,7 +699,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success Message.",
+            "description": "Success response.",
             "content": {
               "application/json": {
                 "schema": {
@@ -602,8 +707,16 @@
                   "properties": {
                     "message": {
                       "type": "string",
-                      "description": "User successfully archived/un-archived."
+                      "description": "User successfully archived/restored."
                     }
+                  }
+                },
+                "examples": {
+                  "archive": {
+                    "$ref": "#/components/examples/ArchiveUser"
+                  },
+                  "restore": {
+                    "$ref": "#/components/examples/RestoreUser"
                   }
                 }
               }
@@ -615,6 +728,11 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "invalidId": {
+                    "$ref": "#/components/examples/InvalidUserId"
+                  }
                 }
               }
             }
@@ -625,6 +743,11 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "notFound": {
+                    "$ref": "#/components/examples/UserNotFound"
+                  }
                 }
               }
             }
@@ -673,6 +796,11 @@
                       "description": "User deleted successfully!"
                     }
                   }
+                },
+                "examples": {
+                  "DeleteUser": {
+                    "$ref": "#/components/examples/DeleteUser"
+                  }
                 }
               }
             }
@@ -683,6 +811,11 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "invalidId": {
+                    "$ref": "#/components/examples/InvalidUserId"
+                  }
                 }
               }
             }
@@ -693,6 +826,1920 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "notFound": {
+                    "$ref": "#/components/examples/UserNotFound"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/districts":{
+      "get": {
+        "tags": ["District"],
+        "description":"Get all districts",
+        "summary": "Get all the districts in the database, only return the id and name",
+        "operationId": "GetAllDistricts",
+        "responses": {
+          "200": {
+            "description": "An array of all the districts",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "The id of the district"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "The name of the district"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "all": {
+                    "$ref": "#/components/examples/Districts"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidAuth": {
+                    "$ref": "#/components/examples/InvalidAuth"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/districts/create": {
+      "post": {
+        "tags": ["District"],
+        "description":"Create a district",
+        "summary": "Create a district with the given name, state, and type",
+        "operationId": "CreateDistrict",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type" : "string",
+                    "description": "The name of the district"
+                  },
+                  "state": {
+                    "type" : "string",
+                    "description": "The state of where the district resides"
+                  },
+                  "type": {
+                    "type" : "string",
+                    "description": "The type of district.",
+                    "enum": [
+                      "INTERNAL",
+                      "ELEMENTARY",
+                      "SECONDARY",
+                      "UNIFIED",
+                      "INDEPENDENT"
+                    ]
+                  }
+                },
+                "required": [
+                  "name",
+                  "state",
+                  "type"
+                ]
+              },
+              "examples": {
+                "create_example": {
+                  "summary": "Create District Example",
+                  "value": {
+                    "name": "Test District",
+                    "state": "CA",
+                    "type": "INTERNAL"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The created district.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/District"
+                },
+                "examples": {
+                  "district": {
+                    "$ref": "#/components/examples/CreateDistrict"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidDistrictType": {
+                    "$ref": "#/components/examples/InvalidDistrictType"
+                  },
+                  "InvalidDistrictInput": {
+                    "$ref": "#/components/examples/InvalidDistrictInput"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidAuth": {
+                    "$ref": "#/components/examples/InvalidAuth"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/districts/{id}":{
+      "get": {
+        "tags": ["District"],
+        "description":"Get a district",
+        "summary": "Get a district from the database",
+        "operationId": "GetDistrict",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All of the information for a district",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/District"
+                },
+                "examples": {
+                  "District": {
+                    "$ref": "#/components/examples/District"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidDistrictId": {
+                    "$ref": "#/components/examples/InvalidDistrictId"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidAuth": {
+                    "$ref": "#/components/examples/InvalidAuth"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "District not found!",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "DistrictNotFound": {
+                    "$ref": "#/components/examples/DistrictNotFound"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/districts/{id}/schools":{
+      "get": {
+        "tags": ["District"],
+        "description":"Get all the schools in a district",
+        "summary": "Get all the schools and associated information for a district",
+        "operationId": "GetDistrictSchools",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All of the information for a district",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/District"
+                },
+                "examples": {
+                  "districtSchools": {
+                    "$ref": "#/components/examples/DistrictSchools"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidDistrictId": {
+                    "$ref": "#/components/examples/InvalidDistrictId"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidAuth": {
+                    "$ref": "#/components/examples/InvalidAuth"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "District not found!",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "DistrictNotFound": {
+                    "$ref": "#/components/examples/DistrictNotFound"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/districts/{id}/update": {
+      "patch": {
+        "tags": ["District"],
+        "description":"Update a district",
+        "summary": "Update a district with the given ID",
+        "operationId": "UpdateDistrict",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/District"
+              },
+              "examples": {
+                "update_example": {
+                  "summary": "Update District",
+                  "value": {
+                    "name": "Updated District"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "All of the information for a district",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/District"
+                },
+                "examples": {
+                  "updateDistrict": {
+                    "$ref": "#/components/examples/UpdateDistrict"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidDistrictId": {
+                    "$ref": "#/components/examples/InvalidDistrictId"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidAuth": {
+                    "$ref": "#/components/examples/InvalidAuth"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "District Not Found",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "DistrictNotFound": {
+                    "$ref": "#/components/examples/DistrictNotFound"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/districts/{id}/delete": {
+      "delete": {
+        "tags": ["District"],
+        "description":"Delete a district with the given ID",
+        "operationId": "DeleteDistrict",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A success message for deleting a district",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "District deleted successfully!"
+                    }
+                  }
+                },
+                "examples": {
+                  "deleteDistrict": {
+                    "$ref": "#/components/examples/DeleteDistrict"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidDistrictId": {
+                    "$ref": "#/components/examples/InvalidDistrictId"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidAuth": {
+                    "$ref": "#/components/examples/InvalidAuth"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "District not found!",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "DistrictNotFound": {
+                    "$ref": "#/components/examples/DistrictNotFound"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/districts/{id}/archive": {
+      "patch": {
+        "tags": [
+          "District"
+        ],
+        "description": "archive/restore a District!",
+        "summary": "archive/restore a District with the given paramaters",
+        "operationId": "ArchiveDistrict",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success Message.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "District successfully archived/restored."
+                    }
+                  }
+                },
+                "examples": {
+                  "archive": {
+                    "$ref": "#/components/examples/ArchiveDistrict"
+                  },
+                  "restore": {
+                    "$ref": "#/components/examples/RestoreDistrict"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidDistrictId": {
+                    "$ref": "#/components/examples/InvalidDistrictId"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidAuth": {
+                    "$ref": "#/components/examples/InvalidAuth"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "District not found!",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "DistrictNotFound": {
+                    "$ref": "#/components/examples/DistrictNotFound"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sales/{id}/districts/{districtId}/add": {
+      "patch": {
+        "tags": [
+          "Sales"
+        ],
+        "description": "Add a sales admin to a district!",
+        "summary": "adds the district to the sales admin and allows a district to query that admin",
+        "operationId": "AddSalesToDistrict",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "districtId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success Message.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Sales Admin Successfully added to district."
+                    }
+                  }
+                },
+                "examples": {
+                  "AddSalesToDistrict": {
+                    "$ref": "#/components/examples/AddSalesToDistrict"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidDistrictId": {
+                    "$ref": "#/components/examples/InvalidDistrictId"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidAuth": {
+                    "$ref": "#/components/examples/InvalidAuth"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The District/User was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "DistrictNotFound": {
+                    "$ref": "#/components/examples/DistrictNotFound"
+                  },
+                  "UserNotFound": {
+                    "$ref": "#/components/examples/UserNotFound"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/sales/{id}/districts/{districtId}/remove": {
+      "patch": {
+        "tags": [
+          "Sales"
+        ],
+        "description": "Remove a sales admin to a district!",
+        "summary": "Removes the district from the sales admin, district no longer has access to this user",
+        "operationId": "RemoveSalesToDistrict",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "districtId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success Message.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Sales Admin Successfully removed to district."
+                    }
+                  }
+                },
+                "examples": {
+                  "RemoveSalesFromDistrict": {
+                    "$ref": "#/components/examples/RemoveSalesFromDistrict"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidDistrictId": {
+                    "$ref": "#/components/examples/InvalidDistrictId"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidAuth": {
+                    "$ref": "#/components/examples/InvalidAuth"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "The District/User was not found.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "DistrictNotFound": {
+                    "$ref": "#/components/examples/DistrictNotFound"
+                  },
+                  "UserNotFound": {
+                    "$ref": "#/components/examples/UserNotFound"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schools/create": {
+      "post": {
+        "tags": ["School"],
+        "description":"Create a school",
+        "summary": "Create a school with the given name, state, type and district",
+        "operationId": "CreateSchool",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "properties": {
+                  "name": {
+                    "type" : "string",
+                    "description": "The name of the school"
+                  },
+                  "state": {
+                    "type" : "string",
+                    "description": "The state of where the school resides"
+                  },
+                  "type": {
+                    "type" : "string",
+                    "description": "The type of school.",
+                    "enum": [
+                      "INTERNAL",
+                      "ELEMENTARY",
+                      "HIGH",
+                      "COLLEGE",
+                      "PUBLIC",
+                      "PRIVATE"
+                    ]
+                  },
+                  "district": {
+                    "type": "string",
+                    "description": "The ID of the district the school belongs to"
+                  }
+                },
+                "required": [
+                  "name",
+                  "state",
+                  "type",
+                  "district"
+                ]
+              },
+              "examples": {
+                "create_example": {
+                  "summary": "Create District Example",
+                  "value": {
+                    "name": "Test School",
+                    "state": "CA",
+                    "type": "INTERNAL",
+                    "district": "61a8bf6dec89b042e2a1cabb"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "The created School.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/School"
+                },
+                "examples": {
+                  "School": {
+                    "$ref": "#/components/examples/School"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidSchoolType": {
+                    "$ref": "#/components/examples/InvalidSchoolType"
+                  },
+                  "InvalidDistrict": {
+                    "$ref": "#/components/examples/InvalidDistrict"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidAuth": {
+                    "$ref": "#/components/examples/InvalidAuth"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not found!",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "DistrictNotFound": {
+                    "$ref": "#/components/examples/DistrictNotFound"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schools/{id}":{
+      "get": {
+        "tags": ["School"],
+        "description":"Get a School",
+        "summary": "Get a school from the database",
+        "operationId": "GetSchool",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All of the information for a school",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/School"
+                },
+                "examples": {
+                  "School": {
+                    "$ref": "#/components/examples/School"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidAuth": {
+                    "$ref": "#/components/examples/InvalidAuth"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "School not found!",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "SchoolNotFound": {
+                    "$ref": "#/components/examples/SchoolNotFound"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schools/{id}/teachers":{
+      "get": {
+        "tags": ["School"],
+        "description":"Get all the teachers in a School",
+        "summary": "Get all the teachers in a School",
+        "operationId": "GetSchoolTeachers",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All of the information for a schools teachers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "teachers": {
+                      "type": "array",
+                      "items": {
+                        "properties": {
+                          "username": {
+                            "type": "string",
+                            "description": "The usernames of the teachers at this school"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "SchoolTeachers": {
+                    "$ref": "#/components/examples/SchoolTeachers"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidSchoolId": {
+                    "$ref": "#/components/examples/InvalidSchoolId"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidAuth": {
+                    "$ref": "#/components/examples/InvalidAuth"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "School not found!",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "SchoolNotFound": {
+                    "$ref": "#/components/examples/SchoolNotFound"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schools/{id}/students":{
+      "get": {
+        "tags": ["School"],
+        "description":"Get all the students in a School",
+        "summary": "Get all the students in a School",
+        "operationId": "GetSchoolStudents",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All of the information for a schools students",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "teachers": {
+                      "type": "array",
+                      "items": {
+                        "properties": {
+                          "username": {
+                            "type": "string",
+                            "description": "The usernames of the students at this school"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "SchoolStudents": {
+                    "$ref": "#/components/examples/SchoolStudents"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidSchoolId": {
+                    "$ref": "#/components/examples/InvalidSchoolId"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidAuth": {
+                    "$ref": "#/components/examples/InvalidAuth"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "School not found!",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "SchoolNotFound": {
+                    "$ref": "#/components/examples/SchoolNotFound"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schools/{id}/update": {
+      "patch": {
+        "tags": ["School"],
+        "description":"Update a school",
+        "summary": "Update a school with the given ID",
+        "operationId": "UpdateSchool",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/School"
+              },
+              "examples": {
+                "UpdateSchool": {
+                  "summary": "Update name and type",
+                  "value": {
+                    "name": "Cool School",
+                    "type": "ELEMENTARY"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "All of the information for a school",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/School"
+                },
+                "examples": {
+                  "UpdatedSchool": {
+                    "$ref": "#/components/examples/UpdatedSchool"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidAuth": {
+                    "$ref": "#/components/examples/InvalidAuth"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "School not found!",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "SchoolNotFound": {
+                    "$ref": "#/components/examples/SchoolNotFound"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schools/{id}/delete": {
+      "delete": {
+        "tags": ["School"],
+        "description":"Delete a school with the given ID",
+        "operationId": "DeleteSchool",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A success message for deleting a school.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "School deleted successfully!"
+                    }
+                  }
+                },
+                "examples": {
+                  "DeleteSchool": {
+                    "$ref": "#/components/examples/DeleteSchool"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidAuth": {
+                    "$ref": "#/components/examples/InvalidAuth"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "School not found!",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "SchoolNotFound": {
+                    "$ref": "#/components/examples/SchoolNotFound"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schools/{id}/archive": {
+      "patch": {
+        "tags": [
+          "School"
+        ],
+        "description": "archive/restore a School!",
+        "summary": "archive/restore a School with the given paramaters",
+        "operationId": "ArchiveSchool",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success Message.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "School successfully archived/restored."
+                    }
+                  }
+                },
+                "examples": {
+                  "ArchiveSchool": {
+                    "$ref": "#/components/examples/ArchiveSchool"
+                  },
+                  "RestoreSchool": {
+                    "$ref": "#/components/examples/RestoreSchool"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidSchoolId": {
+                    "$ref": "#/components/examples/InvalidSchoolId"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidAuth": {
+                    "$ref": "#/components/examples/InvalidAuth"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "School not found!",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "SchoolNotFound": {
+                    "$ref": "#/components/examples/SchoolNotFound"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schools/{id}/courses/{code}": {
+      "patch": {
+        "tags": ["School"],
+        "description":"Add or Update a license on a school for a given course",
+        "summary": "If school already has a license with this course, the licenses will be updated, else a new license will be created.",
+        "operationId": "AddOrUpdateLicense",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/School/properties/licenses/items"
+              },
+              "examples": {
+                "AddCourseLicense": {
+                  "summary": "Create Course License",
+                  "value": {
+                    "displayName": "testing",
+                    "activation": "2021-11-17T02:07:14.034Z",
+                    "expiration": "2021-12-17T02:07:14.034Z",
+                    "isDemoLicense": true 
+                  }
+                },
+                "UpdateCourseLicense": {
+                  "summary": "Update Course License",
+                  "value": {
+                    "displayName": "New Display Name" 
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success message for the adding or updating a course license to a school",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Course License Created/Updated!"
+                    }
+                  }
+                },
+                "examples": {
+                  "AddCourseLicense": {
+                    "$ref": "#/components/examples/AddCourseLicense"
+                  },
+                  "UpdateCourseLicense": {
+                    "$ref": "#/components/examples/UpdateCourseLicense"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidSchoolId": {
+                    "$ref": "#/components/examples/InvalidSchoolId"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidAuth": {
+                    "$ref": "#/components/examples/InvalidAuth"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "School/Course not found!",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }, 
+                "examples": {
+                  "CourseNotFound": {
+                    "$ref": "#/components/examples/CourseNotFound"
+                  },
+                  "SchoolNotFound": {
+                    "$ref": "#/components/examples/SchoolNotFound"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schools/{id}/courses/{code}/remove": {
+      "patch": {
+        "tags": ["School"],
+        "description":"Remove a license on a school for a given course",
+        "summary": "Removes a course license from a school",
+        "operationId": "RemoveLicense",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success message for removing a course license from a school.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Course License Removed!"
+                    }
+                  }
+                },
+                "examples": {
+                  "RemoveCourseLicense": {
+                    "$ref": "#/components/examples/RemoveCourseLicense"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidSchoolId": {
+                    "$ref": "#/components/examples/InvalidSchoolId"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidAuth": {
+                    "$ref": "#/components/examples/InvalidAuth"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "School/Course not found!",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }, 
+                "examples": {
+                  "CourseNotFound": {
+                    "$ref": "#/components/examples/CourseNotFound"
+                  },
+                  "SchoolNotFound": {
+                    "$ref": "#/components/examples/SchoolNotFound"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schools/{id}/courses/{code}/archive": {
+      "patch": {
+        "tags": ["School"],
+        "description":"Archive a license on a school for a given course",
+        "summary": "Archive a course license from a school",
+        "operationId": "ArchiveLicense",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "code",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success message for archiving a course license from a school.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "description": "Course License Archived!"
+                    }
+                  }
+                },
+                "examples": {
+                  "ArchiveCourseLicense": {
+                    "$ref": "#/components/examples/ArchiveCourseLicense"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidSchoolId": {
+                    "$ref": "#/components/examples/InvalidSchoolId"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidAuth": {
+                    "$ref": "#/components/examples/InvalidAuth"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "School/Course not found!",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }, 
+                "examples": {
+                  "CourseNotFound": {
+                    "$ref": "#/components/examples/CourseNotFound"
+                  },
+                  "SchoolNotFound": {
+                    "$ref": "#/components/examples/SchoolNotFound"
+                  }
                 }
               }
             }
@@ -725,7 +2772,15 @@
       "User": {
         "type": "object",
         "discriminator": {
-          "propertyName": "userType"
+          "propertyName": "userType",
+          "mapping": {
+            "MC_ADMIN": "MCAdmin",
+            "SALES": "Sales",
+            "DISTRICT_ADMIN": "DistrictAdmin",
+            "SCHOOL_ADMIN": "SchoolAdmin",
+            "TEACHER": "Teacher",
+            "STUDENT": "Student"
+          }
         },
         "properties": {
           "username": {
@@ -801,9 +2856,9 @@
               },
               "districts": {
                 "type": "array",
-                "description": "The IDs of the district that this user is a part of",
+                "description": "The district that this user is a part of",
                 "items": {
-                  "type": "string"
+                  "$ref": "#/components/schemas/District"
                 }
               }
             }
@@ -823,8 +2878,7 @@
                 "type": "string"
               },
               "district": {
-                "type": "string",
-                "description": "The ID of the district that this user is a part of"
+                "$ref": "#/components/schemas/District"
               }
             },
             "required": [
@@ -846,12 +2900,10 @@
                 "type": "string"
               },
               "district": {
-                "type": "string",
-                "description": "The ID of the district that this user is a part of"
+                "$ref": "#/components/schemas/District"
               },
               "school": {
-                "type": "string",
-                "description": "The ID of the school that this user is a part of"
+                "$ref": "#/components/schemas/School"
               }
             },
             "required": [
@@ -871,21 +2923,19 @@
             "type": "object",
             "properties": {
               "district": {
-                "type": "string",
-                "description": "The ID of the district that this user is a part of"
+                "$ref": "#/components/schemas/District"
               },
               "school": {
-                "type": "string",
-                "description": "The ID of the school that this user is a part of"
+                "$ref": "#/components/schemas/School"
               },
               "classrooms": {
                 "type": "array",
                 "items": {
                   "type": "object",
+                  "description": "The classrooms that this teacher is in.",
                   "properties": {
                     "classroom": {
-                      "type": "string",
-                      "description": "The ID of the classroom that this user is a part of"
+                      "$ref": "#/components/schemas/Classroom"
                     }
                   },
                   "required": [
@@ -911,21 +2961,19 @@
             "type": "object",
             "properties": {
               "district": {
-                "type": "string",
-                "description": "The ID of the district that this user is a part of"
+                "$ref": "#/components/schemas/District"
               },
               "school": {
-                "type": "string",
-                "description": "The ID of the school that this user is a part of"
+                "$ref": "#/components/schemas/School"
               },
               "classrooms": {
                 "type": "array",
                 "items": {
                   "type": "object",
+                  "description": "The classrooms that this student is enrolled in, along with metadata.",
                   "properties": {
                     "classroom": {
-                      "type": "string",
-                      "description": "The ID of the classroom that this user is a part of"
+                      "$ref": "#/components/schemas/Classroom"
                     },
                     "addedBy": {
                       "type": "string",
@@ -948,6 +2996,1369 @@
             ]
           }
         ]
+      },
+      "District": {
+        "type": "object",
+        "description": "A District Object",
+        "properties": {
+          "name": {
+            "type" : "string",
+            "description": "The name of the district"
+          },
+          "state": {
+            "type" : "string",
+            "description": "The state of where the district resides"
+          },
+          "type": {
+            "type" : "string",
+            "description": "The type of district.",
+            "enum": [
+              "INTERNAL",
+              "ELEMENTARY",
+              "SECONDARY",
+              "UNIFIED",
+              "INDEPENDENT"
+            ]
+          },
+          "archived": {
+            "type" : "boolean",
+            "description": "If the district is archived"
+          },
+          "createdBy": {
+            "type": "string",
+            "description": "The username of the user that created the district. Not a reference in case the user is deleted."
+          },
+          "schools": {
+            "type": "array",
+            "description": "A list of all the schools within this district.",
+            "items": {
+              "$ref": "#/components/schemas/School"
+            }
+          },
+          "classrooms": {
+            "type": "array",
+            "description": "A list of all the classrooms within this district.",
+            "items": {
+              "$ref": "#/components/schemas/Classroom"
+            }
+          },
+          "admins": {
+            "type": "array",
+            "description": "A list of all the district admins within this district.",
+            "items": {
+              "$ref": "#/components/schemas/DistrictAdmin"
+            }
+          },
+          "sales": {
+            "type": "array",
+            "description": "A list of all the sales admins within this district.",
+            "items": {
+              "$ref": "#/components/schemas/Sales"
+            }
+          },
+          "schoolAdmins": {
+            "type": "array",
+            "description": "A list of all the school admins within this district.",
+            "items": {
+              "$ref": "#/components/schemas/SchoolAdmin"
+            }
+          },
+          "teachers": {
+            "type": "array",
+            "description": "A list of all the teachers within this district.",
+            "items": {
+              "$ref": "#/components/schemas/Teacher"
+            }
+          },
+          "students": {
+            "type": "array",
+            "description": "A list of all the students within this district.",
+            "items": {
+              "$ref": "#/components/schemas/Student"
+            }
+          }
+        }
+      },
+      "School": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type" : "string",
+            "description": "The name of the school"
+          },
+          "state": {
+            "type" : "string",
+            "description": "The state of where the school resides"
+          },
+          "type": {
+            "type" : "string",
+            "description": "The type of school.",
+            "enum": [
+              "INTERNAL",
+              "ELEMENTARY",
+              "HIGH",
+              "COLLEGE",
+              "PUBLIC",
+              "PRIVATE"
+            ]
+          },
+          "district": {
+            "$ref": "#/components/schemas/District"
+          },
+          "archived": {
+            "type" : "boolean",
+            "description": "If the school is archived"
+          },
+          "licenses": {
+            "type": "array",
+            "description": "The Course licenses provided to the school.",
+            "items": {
+              "properties": {
+                "course": {
+                  "type": "string",
+                  "description": "The tag for the course that this license is for"
+                },
+                "displayName": {
+                  "type" : "string",
+                  "description": "A custom display name for the course if given"
+                },
+                "activation": {
+                  "type": "string",
+                  "description": "The date of activation for the license if given"
+                },
+                "expiration": {
+                  "type": "string",
+                  "description": "The date of expiration for the license if given"
+                },
+                "isDemoLicense": {
+                  "type": "boolean",
+                  "description": "If the license is a demo license"
+                },
+                "archived": {
+                  "type": "boolean",
+                  "description": "If this license has been archived."
+                }
+              }
+            }
+          },
+          "createdBy": {
+            "type": "string",
+            "description": "The username of the user that created the school. Not a reference in case the user is deleted."
+          },
+          "classrooms": {
+            "type": "array",
+            "description": "A list of all the classrooms within this district.",
+            "items": {
+              "$ref": "#/components/schemas/Classroom"
+            }
+          },
+          "schoolAdmins": {
+            "type": "array",
+            "description": "A list of all the school admins within this school.",
+            "items": {
+              "$ref": "#/components/schemas/SchoolAdmin"
+            }
+          },
+          "teachers": {
+            "type": "array",
+            "description": "A list of all the teachers within this district.",
+            "items": {
+              "$ref": "#/components/schemas/Teacher"
+            }
+          },
+          "students": {
+            "type": "array",
+            "description": "A list of all the students within this district.",
+            "items": {
+              "$ref": "#/components/schemas/Student"
+            }
+          }
+        }
+      },
+      "Classroom": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type" : "string",
+            "description": "The name of the classroom"
+          },
+          "courseInfo": {
+            "type" : "object",
+            "description": "The course metadata for this classroom",
+            "properties": {
+              "code": {
+                "type" : "string",
+                "description": "The unique course code"
+              },
+              "displayName": {
+                "type": "string",
+                "description": "The custom display name for this course as defined on the license for that school."
+              },
+              "course": {
+                "description": "Virtual course field that is populated on request. the entire Course is not stored on the classroom. Referenced from code",
+                "allOf": [
+                  {
+                    "$ref": "#/components/schemas/Course"
+                  }
+                ]
+              }
+            }
+          },
+          "school": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type" : "string",
+                "description": "The name of the school, metadata in-case the school is deleted"
+              },
+              "_s": {
+                "$ref": "#/components/schemas/School"
+              }
+            }
+          },
+          "district": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type" : "string",
+                "description": "The name of the district, metadata in-case the district is deleted"
+              },
+              "_d": {
+                "$ref": "#/components/schemas/District"
+              }
+            }
+          },
+          "teachers": {
+            "type": "array",
+            "items": {
+              "description": "The Teachers that are assigned to this classroom, with associated metadata.",
+              "properties": {
+                "username": {
+                  "type" : "string",
+                  "description": "The username of the teacher, metadata in-case the teacher is deleted"
+                },
+                "_t": {
+                  "$ref": "#/components/schemas/Teacher"
+                },
+                "addedBy": {
+                  "type": "string",
+                  "description": "The username or name of the user that added this teacher to the classroom."
+                }
+              }
+            }
+          },
+          "students": {
+            "type": "array",
+            "items": {
+              "description": "The students that are enrolled in this classroom, and associated metadata.",
+              "properties": {
+                "username": {
+                  "type" : "string",
+                  "description": "The username of the student, metadata in-case the student is deleted"
+                },
+                "_s": {
+                  "$ref": "#/components/schemas/Student"
+                },
+                "quizSubmissions": {
+                  "type": "object",
+                  "properties": {
+                    "quiz": {
+                      "description": "A reference to the quiz section for this course.",
+                      "allOf": [
+                        {
+                          "$ref": "#components/schemas/Quiz"
+                        }
+                      ]
+                    },
+                    "title": {
+                      "type": "string",
+                      "description": "The title of the quiz that was taken"
+                    },
+                    "latest": {
+                      "type": "object",
+                      "description": "The most recent quiz submission from this student",
+                      "properties": {
+                        "questions": {
+                          "type": "array",
+                          "description": "The Questions for this quiz",
+                          "items": {
+                            "allOf": [
+                              {
+                                "$ref": "#/components/schemas/QuizQuestion"
+                              },
+                              {
+                                "type": "object",
+                                "properties": {
+                                  "answer": {
+                                    "type": "string",
+                                    "description": "The students given answer."
+                                  },
+                                  "isCorrect": {
+                                    "type": "boolean",
+                                    "description": "If the students given answer is correct or not."
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        },
+                        "score": {
+                          "type": "number",
+                          "description": "The overall score for this attempt for this student"
+                        },
+                        "attempt": {
+                          "type": "number",
+                          "description": "The attempt number for this quiz by this student.",
+                          "default": 1
+                        },
+                        "attemptDate": {
+                          "type": "string",
+                          "description": "The date that the attempt was made."
+                        }
+                      }
+                    },
+                    "previous": {
+                      "type": "array",
+                      "description": "A list of all the previous attempts a student has made.",
+                      "items": {
+                        "properties": {
+                          "questions": {
+                            "type": "array",
+                            "description": "The Questions for this quiz",
+                            "items": {
+                              "allOf": [
+                                {
+                                  "$ref": "#/components/schemas/QuizQuestion"
+                                },
+                                {
+                                  "type": "object",
+                                  "properties": {
+                                    "answer": {
+                                      "type": "string",
+                                      "description": "The students given answer."
+                                    },
+                                    "isCorrect": {
+                                      "type": "boolean",
+                                      "description": "If the students given answer is correct or not."
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          "score": {
+                            "type": "number",
+                            "description": "The overall score for this attempt for this student"
+                          },
+                          "attempt": {
+                            "type": "number",
+                            "description": "The attempt number for this quiz by this student.",
+                            "default": 1
+                          },
+                          "attemptDate": {
+                            "type": "string",
+                            "description": "The date that the attempt was made."
+                          },
+                          "resetDate": {
+                            "type": "string",
+                            "description": "The date at which this quiz attempt was reset."
+                          },
+                          "resetBy": {
+                            "type": "string",
+                            "description": "The username of the user who reset the quiz attempt for the student."
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "addedBy": {
+                  "type": "string",
+                  "description": "The username or name of the user that added this student to the classroom."
+                }
+              }
+            }
+          },
+          "archived": {
+            "type": "boolean",
+            "description": "If this classroom has been archived."
+          },
+          "createdBy": {
+            "type": "string",
+            "description": "The username or name of the user that created this classroom"
+          }
+        }
+      },
+      "Section": {
+        "discriminator": {
+          "propertyName": "type"
+        },
+        "type": "object",
+        "properties": {
+          "title": {
+            "type" : "string",
+            "description": "The title for this section",
+            "default": "Unnamed Section"
+          },
+          "description": {
+            "type" : "string",
+            "description": "The description for this section",
+            "default": "no description"
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of this section",
+            "default": "DOCUMENT",
+            "enum": [
+              "DOCUMENT",
+              "VIDEO",
+              "QUIZ",
+              "PROJECT"
+            ]
+          },
+          "isDemoSection": {
+            "type": "boolean",
+            "description": "If this section is available on a demo license"
+          },
+          "duration": {
+            "type": "number",
+            "description": "The estimated length of time needed to complete this section"
+          },
+          "difficulty": {
+            "type": "number",
+            "description": "The estimated difficulty for this section"
+          },
+          "files": {
+            "type": "array",
+            "description": "Any Files that have been uploaded for this section",
+            "items": {
+              "$ref": "#/components/schemas/File"
+            }
+          },
+          "resources": {
+            "type": "array",
+            "description": "A list of resources that have been created for this section",
+            "items": {
+              "properties": {
+                "title": {
+                  "type" : "string",
+                  "description": "The title for this resource",
+                  "default": "Unnamed Resource"
+                },
+                "markdown": {
+                  "type" : "string",
+                  "description": "The markdown created for this resource",
+                  "default": ""
+                },
+                "index": {
+                  "type": "number",
+                  "description": "The indexed order of the resource"
+                },
+                "forStudent": {
+                  "type": "boolean",
+                  "description": "If this resource is for a Student",
+                  "default": false
+                },
+                "forTeacher": {
+                  "type": "boolean",
+                  "description": "If this resource is for a Teacher",
+                  "default": false
+                }
+              }
+            }
+          },
+          "isPublished": {
+            "type": "boolean",
+            "description": "Wether this section is a draft or published version of a section"
+          },
+          "published": {
+            "description": "If this is a draft section and it has been published atleast once, this holds the reference to the published version of the section",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Video"
+              },
+              {
+                "$ref": "#/components/schemas/Quiz"
+              },
+              {
+                "$ref": "#/components/schemas/Document"
+              },
+              {
+                "$ref": "#/components/schemas/Project"
+              }
+            ]
+          },
+          "draft": {
+            "type": "object",
+            "description": "If this is a published section, this holds the reference to the draft version of the section",
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Video"
+              },
+              {
+                "$ref": "#/components/schemas/Quiz"
+              },
+              {
+                "$ref": "#/components/schemas/Document"
+              },
+              {
+                "$ref": "#/components/schemas/Project"
+              }
+            ]
+          }
+        }
+      },
+      "Quiz": {
+        "description": "A representation of a QUIZ. Note that `Quiz` will be used as the discriminator value.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Section"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "questions": {
+                "type": "array",
+                "items": {
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/QuizQuestion"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ]
+      },
+      "QuizQuestion": {
+        "type": "object",
+        "properties": {
+          "question": {
+            "type": "string",
+            "description": "A question for this quiz"
+          },
+          "type": {
+            "type": "string",
+            "description": "The type of question, mainly multiple choice but allows for modularity with different question types.",
+            "enum": [
+              "MULTIPLE_CHOICE",
+              "SHORT_ANSWER"
+            ],
+            "default": "MULTIPLE_CHOICE"
+          },
+          "explanation": {
+            "type": "string",
+            "description": "An explanation of the answer for this question"
+          },
+          "tags": {
+            "type": "array",
+            "description": "The tags for this question. To be used for filtering specific questions from all courses.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "choices": {
+            "type": "array",
+            "description": "The different answer choices for this question.",
+            "items": {
+              "properties": {
+                "content": {
+                  "type": "string",
+                  "description": "The choice content."
+                },
+                "isCorrect": {
+                  "type": "boolean",
+                  "description": "If this choice is the correct answer."
+                }
+              }
+            }
+          }
+        }
+      },
+      "Video": {
+        "description": "A representation of a VIDEO. Note that `Video` will be used as the discriminator value.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Section"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "videoURL": {
+                "type" : "string",
+                "description": "The url for the video that was created for this section",
+                "default": ""
+              },
+              "markdown": {
+                "type" : "string",
+                "description": "The markdown created for this section",
+                "default": ""
+              }
+            }
+          }
+        ]
+      },
+      "Document": {
+        "description": "A representation of a DOCUMENT. Note that `Document` will be used as the discriminator value.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Section"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "markdown": {
+                "type" : "string",
+                "description": "The markdown created for this section",
+                "default": ""
+              }
+            }
+          }
+        ]
+      },
+      "Project": {
+        "description": "A representation of a PROJECT. Note that `Project` will be used as the discriminator value.",
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Section"
+          },
+          {
+            "type": "object",
+            "properties": {
+              "markdown": {
+                "type" : "string",
+                "description": "The markdown created for this section",
+                "default": ""
+              }
+            }
+          }
+        ]
+      },
+      "File": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The file name"
+          },
+          "url": {
+            "type": "string",
+            "description": "The URL of where the file is hosted."
+          },
+          "key": {
+            "type": "string",
+            "description": "The AWS Bucket key for the object"
+          },
+          "versionId": {
+            "type": "string",
+            "description": "The version ID of the file in AWS"
+          },
+          "uploadedBy": {
+            "type": "string",
+            "description": "The username of the user that uploaded this file"
+          }
+        }
+      },
+      "Course": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type" : "string",
+            "description": "The title for this Course",
+            "default": "Unnamed Course"
+          },
+          "description": {
+            "type" : "string",
+            "description": "The description for this Course",
+            "default": "no description"
+          },
+          "code": {
+            "type": "string",
+            "description": "The course code that will be used to identify this course, COURSE CODES MUST BE UNIQUE",
+            "uniqueItems": true
+          },
+          "image": {
+            "$ref": "#/components/schemas/File"
+          },
+          "duration": {
+            "type": "number",
+            "description": "The total duration of this course, added up from all the sections",
+            "default": 0
+          },
+          "skills": {
+            "type": "array",
+            "description": "The skills that are covered in this course.",
+            "items": {
+              "type": "string"
+            }
+          },
+          "draft": {
+            "type": "object",
+            "description": "The draft version of the course.",
+            "properties": {
+              "units": {
+                "type": "array",
+                "description": "The draft units on this course",
+                "items": {
+                  "$ref": "#/components/schemas/Unit"
+                }
+              }
+            }
+          },
+          "published": {
+            "type": "object",
+            "description": "The published version of the course.",
+            "properties": {
+              "units": {
+                "type": "array",
+                "description": "The published units on this course",
+                "items": {
+                  "$ref": "#/components/schemas/Unit"
+                }
+              },
+              "publishedBy": {
+                "type": "string",
+                "description": "The username of the user that published this course."
+              }
+            }
+          }
+        }
+      },
+      "Unit": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type" : "string",
+            "description": "The title for this unit",
+            "default": "Unnamed Unit"
+          },
+          "description": {
+            "type" : "string",
+            "description": "The description for this unit",
+            "default": "no description"
+          },
+          "image": {
+            "$ref": "#/components/schemas/File"
+          },
+          "index": {
+            "type": "number",
+            "description": "The index order of this unit"
+          },
+          "chapters": {
+            "type": "array",
+            "description": "The array of chapters on this unit.",
+            "items": {
+              "$ref": "#/components/schemas/Chapter"
+            }
+          }
+        }
+      },
+      "Chapter": {
+        "type": "object",
+        "properties": {
+          "title": {
+            "type" : "string",
+            "description": "The title for this chapter",
+            "default": "Unnamed chapter"
+          },
+          "description": {
+            "type" : "string",
+            "description": "The description for this Chapter",
+            "default": "no description"
+          },
+          "index": {
+            "type": "number",
+            "description": "The index order of this chapter"
+          },
+          "sections": {
+            "type": "array",
+            "description": "Metadata array to handle the sections for this chapter",
+            "items": {
+              "properties": {
+                "index": {
+                  "type": "number",
+                  "description": "The index order of this section, this is only stored on the course, not on the individual sections."
+                },
+                "_s": {
+                  "description": "The reference to the actual section",
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/Video"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Document"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Quiz"
+                    },
+                    {
+                      "$ref": "#/components/schemas/Project"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "examples": {
+      "InvalidAuth": {
+        "summary": "Invalid Auth",
+        "value": {
+          "message": "Incorrect User Permissions"
+        }
+      },
+      "NoUsername": {
+        "summary": "no username",
+        "value": {
+          "message": "Must Provide a username"
+        }
+      },
+      "InvalidUserId" : {
+        "summary": "Invalid user ID",
+        "value": {
+          "message": "Invalid User ID given"
+        }
+      },
+      "InvalidUserType": {
+        "summary": "Invalid userType",
+        "value": {
+          "message": "You must provide a valid userType."
+        }
+      },
+      "invalidUsername": {
+        "summary": "Invalid username",
+        "value": {
+          "message": "You must provide a valid username."
+        }
+      },
+      "IncorrectUsernameOrPassword": {
+        "summary": "Incorrect username/password",
+        "value": {
+          "message": "Incorrect username and/or password!"
+        }
+      },
+      "InvalidEmail": {
+        "summary": "Invalid email",
+        "value": {
+          "message": "You must provide a valid email."
+        }
+      },
+      "InvalidOAuth": {
+        "summary": "Both OAuth given",
+        "value": {
+          "message": "Please only provide either google or clever OAuth, not both."
+        }
+      },
+      "InvalidActivation": {
+        "summary": "No Activation method",
+        "value": {
+          "message": "Please provide an activation method!"
+        }
+      },
+      "UserAlreadyExists": {
+        "summary": "user already exists",
+        "value": {
+          "message": "User already exists!"
+        }
+      },
+      "UserAlreadyActive": {
+        "summary": "user already active",
+        "value": {
+          "message": "User already actived"
+        }
+      },
+      "UserNotActive": {
+        "summary": "user not active",
+        "value": {
+          "message": "User not Activated!"
+        }
+      },
+      "UserNotFound": {
+        "summary": "not found",
+        "value": {
+          "message": "User not found!"
+        }
+      },
+      "ArchiveUser": {
+        "summary": "User Archived",
+        "value": {
+          "message": "User Successfully Archived!"
+        }
+      },
+      "RestoreUser": {
+        "summary": "User Restored",
+        "value": {
+          "message": "User Successfully Restored!"
+        }
+      },
+      "DeleteUser": {
+        "summary": "User deleted",
+        "value": {
+          "message": "User Successfully Deleted!"
+        }
+      },
+      "InvalidDistrict": {
+        "summary": "Invalid District",
+        "value": {
+          "message": "Must provide a valid district!"
+        }
+      },
+      "InvalidDistrictType": {
+        "summary": "Invalid type",
+        "value": {
+          "message": "Invalid District Type given!"
+        }
+      },
+      "InvalidDistrictInput": {
+        "summary": "Invalid input",
+        "value": {
+          "message": "Must provide a name and state!"
+        }
+      },
+      "InvalidDistrictId": {
+        "summary": "Invalid ID",
+        "value": {
+          "message": "Invalid district ID!"
+        }
+      },
+      "DistrictNotFound": {
+        "summary": "Not Found",
+        "value": {
+          "message": "District not found!"
+        }
+      },
+      "InvalidSchool": {
+        "summary": "Invalid School",
+        "value": {
+          "message": "Must provide a valid school!"
+        }
+      },
+      "InvalidSchoolId": {
+        "summary": "Invalid ID",
+        "value": {
+          "message": "Must provide a valid school ID!"
+        }
+      },
+      "InvalidSchoolType": {
+        "summary": "Invalid type",
+        "value": {
+          "message": "Invalid School Type given!"
+        }
+      },
+      "SchoolNotFound": {
+        "summary": "Not Found",
+        "value": {
+          "message": "School not found!"
+        }
+      },
+      "Districts": {
+        "summary": "All Districts",
+        "value": [
+          {
+            "id": "61ba41862cd3d7695e3231d2",
+            "name": "Test District"
+          },
+          {
+            "id": "61ba418b9b2ad215b8676b3b",
+            "name": "Random District"
+          }
+        ]
+      },
+      "CreateDistrict": {
+        "summary": "Create District Example",
+        "value": {
+          "name": "Test District",
+          "state": "CA",
+          "type": "INTERNAL",
+          "archived": false,
+          "_id": "61a8bf6dec89b042e2a1cabb",
+          "createdAt": "2021-12-02T12:43:25.721Z",
+          "updatedAt": "2021-12-02T12:43:25.721Z",
+          "__v": 0,
+          "id": "61a8bf6dec89b042e2a1cabb"
+        }
+      },
+      "UpdateDistrict": {
+        "summary": "District Example",
+        "value": {
+          "name": "Updated District",
+          "state": "CA",
+          "type": "INTERNAL",
+          "archived": false,
+          "admins": [
+            {
+              "id": "61ba43cf594dc1cfda1418b2",
+              "username": "Test@DA.com"
+            }
+          ],
+          "_id": "61a8bf6dec89b042e2a1cabb",
+          "createdAt": "2021-12-02T12:43:25.721Z",
+          "updatedAt": "2021-12-02T12:43:25.721Z",
+          "__v": 0,
+          "id": "61a8bf6dec89b042e2a1cabb"
+        }
+      },
+      "DeleteDistrict": {
+        "summary": "District deleted",
+        "value": {
+          "message": "District deleted successfully!"
+        }
+      },
+      "ArchiveDistrict": {
+        "summary": "District Archived",
+        "value": {
+          "message": "District Successfully Archived!"
+        }
+      },
+      "RestoreDistrict": {
+        "summary": "District Restored",
+        "value": {
+          "message": "District Successfully Restored!"
+        }
+      },
+      "AddSalesToDistrict": {
+        "summary": "Sales admin added",
+        "value": {
+          "message": "Sales Admin Successfully added to district."
+        }
+      },
+      "RemoveSalesFromDistrict": {
+        "summary": "Sales admin removed",
+        "value": {
+          "message": "Sales Admin Successfully removed from district."
+        }
+      },
+      "District": {
+        "summary": "District Example",
+        "value": {
+          "name": "Test District",
+          "state": "CA",
+          "type": "INTERNAL",
+          "archived": false,
+          "admins": [
+            {
+              "id": "61ba43cf594dc1cfda1418b2",
+              "username": "Test@DA.com"
+            }
+          ],
+          "_id": "61a8bf6dec89b042e2a1cabb",
+          "createdAt": "2021-12-02T12:43:25.721Z",
+          "updatedAt": "2021-12-02T12:43:25.721Z",
+          "__v": 0,
+          "id": "61a8bf6dec89b042e2a1cabb"
+        }
+      },
+      "DistrictSchools": {
+        "summary": "District Schools",
+        "value": {
+          "name": "Test District",
+          "state": "CA",
+          "type": "INTERNAL",
+          "archived": false,
+          "admins": [
+            {
+              "id": "61ba43cf594dc1cfda1418b2",
+              "username": "Test@DA.com",
+              "firstname": "Test",
+              "lastname": "District-Admin"
+            }
+          ],
+          "sales": [
+            {
+              "id": "61ba446db7888edaa89ab9da",
+              "username": "Test@sales.com",
+              "firstname": "Test",
+              "lastname": "Sales"
+            }
+          ],
+          "schools": [
+            {
+              "name": "Test School",
+              "state": "CA",
+              "teachers": [
+                {
+                  "id": "61ba45632bc909664da0fcbe",
+                  "username": "test@teacher.com",
+                  "activated": "true"
+                },
+                {
+                  "id": "61ba455ee5084e881d842383",
+                  "username": "second@teacher.com",
+                  "activated": "false"
+                }
+              ],
+              "students": [
+                {
+                  "id": "61ba4559f292610acf3c1c3e",
+                  "username": "ts12345",
+                  "activated": "true"
+                },
+                {
+                  "id": "61ba4555699f1ae6b464d6ca",
+                  "username": "ss123456",
+                  "activated": "true"
+                }
+              ],
+              "classrooms": [
+                {
+                  "id": "61ba4551d967d314c4574d07",
+                  "name": "Test Class"
+                }
+              ],
+              "licenses": [
+                {
+                  "course": "TC101",
+                  "displayName": "Test Course",
+                  "activation": "2021-11-17T02:07:14.034Z",
+                  "expiration": "2021-12-17T02:07:14.034Z",
+                  "isDemoLicense": true 
+                }
+              ]
+            }
+          ],
+          "_id": "61a8bf6dec89b042e2a1cabb",
+          "createdAt": "2021-12-02T12:43:25.721Z",
+          "updatedAt": "2021-12-02T12:43:25.721Z",
+          "__v": 0,
+          "id": "61a8bf6dec89b042e2a1cabb"
+        }
+      },
+      "Student": {
+        "summary": "Student",
+        "value": {
+            "_id": "61a8d6dec394ff74967a5a85",
+            "schoolAssignedID": "12345",
+            "district": "61a8bf6dec89b042e2a1cabb",
+            "school": "61a8bfbea8c5badc02a5eab6",
+            "classrooms": [
+                {
+                    "classroom": "61a8cb7ee9dde95482bfbfb1",
+                    "addedBy": "test@teacher.com",
+                    "_id": "61a8d6dec394ff74967a5a86"
+                }
+            ],
+            "username": "TS12345",
+            "userType": "STUDENT",
+            "firstname": "Test",
+            "lastname": "Student",
+            "usingGoogleOAuth": false,
+            "usingCleverOAuth": false,
+            "activated": true,
+            "archived": false,
+            "__t": "Student",
+            "createdAt": "2021-12-02T14:23:26.854Z",
+            "updatedAt": "2021-12-02T15:36:48.494Z",
+            "__v": 1
+        }
+      },
+      "Teacher": {
+        "summary": "Teacher",
+        "value": {
+            "_id": "61a8d6dec394ff74967a5a85",
+            "district": "61a8bf6dec89b042e2a1cabb",
+            "school": "61a8bfbea8c5badc02a5eab6",
+            "classrooms": [
+                {
+                    "classroom": "61a8cb7ee9dde95482bfbfb1",
+                    "_id": "61a8d6dec394ff74967a5a86"
+                }
+            ],
+            "username": "test@teacher.com",
+            "userType": "TEACHER",
+            "firstname": "Test",
+            "lastname": "Teacher",
+            "usingGoogleOAuth": false,
+            "usingCleverOAuth": false,
+            "activated": true,
+            "archived": false,
+            "__t": "Teacher",
+            "createdAt": "2021-12-02T14:23:26.854Z",
+            "updatedAt": "2021-12-02T15:36:48.494Z",
+            "__v": 1
+        }
+      },
+      "MCAdmin": {
+        "summary": "MC Admin",
+        "value": {
+            "_id": "61a8d6dec394ff74967a5a85",
+            "username": "mc@admin.com",
+            "userType": "MC_ADMIN",
+            "firstname": "MC",
+            "lastname": "Admin",
+            "usingGoogleOAuth": false,
+            "usingCleverOAuth": false,
+            "activated": true,
+            "archived": false,
+            "__t": "McAdmin",
+            "createdAt": "2021-12-02T14:23:26.854Z",
+            "updatedAt": "2021-12-02T15:36:48.494Z",
+            "__v": 1
+        }
+      },
+      "Sales": {
+        "summary": "Sales Admin",
+        "value": {
+            "_id": "61a8d6dec394ff74967a5a85",
+            "districts": ["61a8bf6dec89b042e2a1cabb"],
+            "username": "test@sales.com",
+            "userType": "SALES",
+            "firstname": "Test",
+            "lastname": "Sales",
+            "usingGoogleOAuth": false,
+            "usingCleverOAuth": false,
+            "activated": true,
+            "archived": false,
+            "__t": "Sales",
+            "createdAt": "2021-12-02T14:23:26.854Z",
+            "updatedAt": "2021-12-02T15:36:48.494Z",
+            "__v": 1
+        }
+      },
+      "DistrictAdmin": {
+        "summary": "District Admin",
+        "value": {
+            "_id": "61a8d6dec394ff74967a5a85",
+            "district": "61a8bf6dec89b042e2a1cabb",
+            "username": "district@admin.com",
+            "userType": "DISTRICT_ADMIN",
+            "firstname": "Test",
+            "lastname": "DA",
+            "usingGoogleOAuth": false,
+            "usingCleverOAuth": false,
+            "activated": true,
+            "archived": false,
+            "__t": "DistrictAdmin",
+            "createdAt": "2021-12-02T14:23:26.854Z",
+            "updatedAt": "2021-12-02T15:36:48.494Z",
+            "__v": 1
+        }
+      },
+      "SchoolAdmin": {
+        "summary": "School Admin",
+        "value": {
+            "_id": "61a8d6dec394ff74967a5a85",
+            "district": "61a8bf6dec89b042e2a1cabb",
+            "school": "61a8bfbea8c5badc02a5eab6",
+            "username": "school@admin.com",
+            "userType": "SCHOOL_ADMIN",
+            "firstname": "School",
+            "lastname": "Admin",
+            "usingGoogleOAuth": false,
+            "usingCleverOAuth": false,
+            "activated": true,
+            "archived": false,
+            "__t": "SchoolAdmin",
+            "createdAt": "2021-12-02T14:23:26.854Z",
+            "updatedAt": "2021-12-02T15:36:48.494Z",
+            "__v": 1
+        }
+      },
+      "School": {
+        "summary": "School",
+        "value": {
+          "name": "Test School",
+          "state": "CA",
+          "type": "INTERNAL",
+          "district": "61a8bf6dec89b042e2a1cabb",
+          "archived": false,
+          "_id": "61a8bfbea8c5badc02a5eab6",
+          "licenses": [],
+          "createdAt": "2021-12-02T12:44:46.471Z",
+          "updatedAt": "2021-12-02T12:44:46.471Z",
+          "__v": 0,
+          "id": "61a8bfbea8c5badc02a5eab6"
+      }
+      },
+      "UpdatedSchool": {
+        "summary": "School",
+        "value": {
+          "name": "Cool School",
+          "state": "CA",
+          "type": "ELEMENTARY",
+          "district": "61a8bf6dec89b042e2a1cabb",
+          "archived": false,
+          "_id": "61a8bfbea8c5badc02a5eab6",
+          "licenses": [],
+          "createdAt": "2021-12-02T12:44:46.471Z",
+          "updatedAt": "2021-12-02T12:44:46.471Z",
+          "__v": 0,
+          "id": "61a8bfbea8c5badc02a5eab6"
+        }
+      },
+      "DeleteSchool": {
+        "summary": "School deleted",
+        "value": {
+          "message": "School deleted successfully!"
+        }
+      },
+      "ArchiveSchool": {
+        "summary": "School Archived",
+        "value": {
+          "message": "School Successfully Archived!"
+        }
+      },
+      "RestoreSchool": {
+        "summary": "School Restored",
+        "value": {
+          "message": "School Successfully Restored!"
+        }
+      },
+      "SchoolTeachers": {
+        "summary": "School Teachers",
+        "value": {
+          "id": "61ba50063b67a04e72990830",
+          "teachers": [
+            {
+              "id": "61ba5001531a258dd88c9e54",
+              "username": "Test@teacher.com"
+            }
+          ]
+        }
+      },
+      "SchoolStudents": {
+        "summary": "School Students",
+        "value": {
+          "id": "61ba50063b67a04e72990830",
+          "students": [
+            {
+              "id": "61ba5001531a258dd88c9e54",
+              "username": "ts12345"
+            }
+          ]
+        }
+      },
+      "AddCourseLicense": {
+        "summary": "Add Course License",
+        "value": {
+          "message": "Course License Created!"
+        }
+      },
+      "UpdateCourseLicense": {
+        "summary": "Update Course License",
+        "value": {
+          "message": "Course License Updated!"
+        }
+      },
+      "RemoveCourseLicense": {
+        "summary": "Remove License",
+        "value": {
+          "message": "Course License Removed!"
+        }
+      },
+      "ArchiveCourseLicense": {
+        "summary": "Archive License",
+        "value": {
+          "message": "Course License Archived!"
+        }
+      },
+      "CourseNotFound": {
+        "summary": "Course not found",
+        "value": {
+          "message": "Course not found!"
+        }
       }
     }
   }
