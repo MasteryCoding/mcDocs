@@ -910,6 +910,87 @@
         }
       }
     },
+    "/districts/map":{
+      "get": {
+        "tags": ["District"],
+        "description":"Get all districts and all the schools in the district",
+        "summary": "Get all the districts in the database, only return the id and name for both district and schools",
+        "operationId": "mapDistricts",
+        "responses": {
+          "200": {
+            "description": "An array of all the districts with a nested array of all the schools",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "description": "The id of the district"
+                      },
+                      "name": {
+                        "type": "string",
+                        "description": "The name of the district"
+                      },
+                      "schools": {
+                        "type": "array",
+                        "items": {
+                          "properties": {
+                            "id": {
+                              "type": "string",
+                              "description": "The id of the school"
+                            },
+                            "name": {
+                              "type": "string",
+                              "description": "The name of the school"
+                            },
+                            "district": {
+                              "type": "string",
+                              "description": "The id of the district that this school is under"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "all": {
+                    "$ref": "#/components/examples/DistrictsMap"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidAuth": {
+                    "$ref": "#/components/examples/InvalidAuth"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/districts/create": {
       "post": {
         "tags": ["District"],
@@ -1116,7 +1197,7 @@
       "get": {
         "tags": ["District"],
         "description":"Get all the schools in a district",
-        "summary": "Get all the schools and associated information for a district",
+        "summary": "Get all the schools with select data from the admins, teachers, students, and classrooms",
         "operationId": "GetDistrictSchools",
         "parameters": [
           {
@@ -1130,15 +1211,235 @@
         ],
         "responses": {
           "200": {
-            "description": "All of the information for a district",
+            "description": "All of the information for a districts schools",
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/District"
+                  "allOf": [
+                    {
+                      "$ref": "#/components/schemas/District"
+                    },
+                    {
+                      "type": "object",
+                      "properties": {
+                        "schools": {
+                          "allOf": [
+                            {
+                              "type": "object",
+                              "properties": {
+                                "admins": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type" : "string",
+                                      "description": "The object id of the user"
+                                    },
+                                    "activated": {
+                                      "type": "boolean",
+                                      "default": false,
+                                      "description": "If this user has been activated"
+                                    },
+                                    "school": {
+                                      "type": "string",
+                                      "description": "The object id of the school"
+                                    }
+                                  }
+                                },
+                                "teachers": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type" : "string",
+                                      "description": "The object id of the user"
+                                    },
+                                    "activated": {
+                                      "type": "boolean",
+                                      "default": false,
+                                      "description": "If this user has been activated"
+                                    },
+                                    "school": {
+                                      "type": "string",
+                                      "description": "The object id of the school"
+                                    }
+                                  }
+                                },
+                                "students": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type" : "string",
+                                      "description": "The object id of the user"
+                                    },
+                                    "activated": {
+                                      "type": "boolean",
+                                      "default": false,
+                                      "description": "If this user has been activated"
+                                    },
+                                    "school": {
+                                      "type": "string",
+                                      "description": "The object id of the school"
+                                    }
+                                  }
+                                },
+                                "classrooms": {
+                                  "type": "object",
+                                  "properties": {
+                                    "id": {
+                                      "type" : "string",
+                                      "description": "The object id of the classroom"
+                                    },
+                                    "school": {
+                                      "type": "object",
+                                      "description": "The metadata object of the school",
+                                      "properties": {
+                                        "_s": {
+                                          "type": "string",
+                                          "description": "The id of the school that this classroom belongs to."
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    }
+                  ]
                 },
                 "examples": {
                   "districtSchools": {
                     "$ref": "#/components/examples/DistrictSchools"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidDistrictId": {
+                    "$ref": "#/components/examples/InvalidDistrictId"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidAuth": {
+                    "$ref": "#/components/examples/InvalidAuth"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "District not found!",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "DistrictNotFound": {
+                    "$ref": "#/components/examples/DistrictNotFound"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/districts/{id}/teachers":{
+      "get": {
+        "tags": ["District"],
+        "description":"Get all the teachers in a district",
+        "summary": "Get all the teachers with select data from the classrooms",
+        "operationId": "GetDistrictTeachers",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All of the information for a districts teachers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "id": {
+                      "type" : "string",
+                      "description": "The object id of the user"
+                    },
+                    "teachers": {
+                      "allOf": [
+                        {
+                          "$ref": "#/components/schemas/Teacher"
+                        },
+                        {
+                          "type": "object",
+                          "properties": {
+                            "classrooms": {
+                              "type": "array",
+                              "items": {
+                                "type": "object",
+                                "properties": {
+                                  "classroom": {
+                                    "type": "object",
+                                    "properties": {
+                                      "name": {
+                                        "type" : "string",
+                                        "description": "Classroom name"
+                                      },
+                                      "id": {
+                                        "type": "string",
+                                        "description": "The ID of the classroom that this teacher is in."
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                },
+                "examples": {
+                  "districtSchools": {
+                    "$ref": "#/components/examples/DistrictTeachers"
                   }
                 }
               }
@@ -2137,6 +2438,104 @@
         }
       }
     },
+    "/schools/{id}/classrooms":{
+      "get": {
+        "tags": ["School"],
+        "description":"Get all the classrooms in a School",
+        "summary": "Get all the classrooms in a School",
+        "operationId": "GetSchoolClassrooms",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "All of the information for a schools classrooms",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "classrooms": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Classroom"
+                      }
+                    }
+                  }
+                },
+                "examples": {
+                  "SchoolStudents": {
+                    "$ref": "#/components/examples/SchoolClassrooms"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid Input.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidSchoolId": {
+                    "$ref": "#/components/examples/InvalidSchoolId"
+                  }
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "InvalidAuth": {
+                    "$ref": "#/components/examples/InvalidAuth"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "School not found!",
+            "content": {
+              "text/html": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                },
+                "examples": {
+                  "SchoolNotFound": {
+                    "$ref": "#/components/examples/SchoolNotFound"
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/schools/{id}/update": {
       "patch": {
         "tags": ["School"],
@@ -2793,7 +3192,8 @@
             "type": "string"
           },
           "password": {
-            "type": "string"
+            "type": "string",
+            "description": "The hashed password of the user, not selected and never returned."
           },
           "userType": {
             "type": "string",
@@ -2808,17 +3208,21 @@
           },
           "usingGoogleOAuth": {
             "type": "boolean",
-            "default": false
+            "default": false,
+            "description": "If the user is using Google OAuth, not selected and never returned."
           },
           "usingCleverOAuth": {
             "type": "boolean",
-            "default": false
+            "default": false,
+            "description": "If the user is using Clever OAuth, not selected and never returned."
           },
           "googleOAuth": {
-            "type": "string"
+            "type": "string",
+            "description": "The Google OAuth token of the user if using, not selected and never returned."
           },
           "cleverOAuth": {
-            "type": "string"
+            "type": "string",
+            "description": "The Clever OAuth token of the user if using, not selected and never returned."
           },
           "activated": {
             "type": "boolean",
@@ -2858,7 +3262,8 @@
                 "type": "array",
                 "description": "The district that this user is a part of",
                 "items": {
-                  "$ref": "#/components/schemas/District"
+                  "type": "string",
+                  "description": "The ID of the districts that this sales admin is in."
                 }
               }
             }
@@ -2878,7 +3283,8 @@
                 "type": "string"
               },
               "district": {
-                "$ref": "#/components/schemas/District"
+                "type": "string",
+                "description": "The ID of the district that this district admin is in."
               }
             },
             "required": [
@@ -2900,10 +3306,12 @@
                 "type": "string"
               },
               "district": {
-                "$ref": "#/components/schemas/District"
+                "type": "string",
+                "description": "The ID of the district that this school admin is in."
               },
               "school": {
-                "$ref": "#/components/schemas/School"
+                "type": "string",
+                "description": "The ID of the school that this school admin is in."
               }
             },
             "required": [
@@ -2923,10 +3331,12 @@
             "type": "object",
             "properties": {
               "district": {
-                "$ref": "#/components/schemas/District"
+                "type": "string",
+                "description": "The ID of the district that this teacher is in."
               },
               "school": {
-                "$ref": "#/components/schemas/School"
+                "type": "string",
+                "description": "The ID of the school that this teacher is in."
               },
               "classrooms": {
                 "type": "array",
@@ -2935,7 +3345,8 @@
                   "description": "The classrooms that this teacher is in.",
                   "properties": {
                     "classroom": {
-                      "$ref": "#/components/schemas/Classroom"
+                      "type": "string",
+                      "description": "The ID of the classroom"
                     }
                   },
                   "required": [
@@ -2961,10 +3372,12 @@
             "type": "object",
             "properties": {
               "district": {
-                "$ref": "#/components/schemas/District"
+                "type": "string",
+                "description": "The ID of the district that this student is in."
               },
               "school": {
-                "$ref": "#/components/schemas/School"
+                "type": "string",
+                "description": "The ID of the school that this student is in."
               },
               "classrooms": {
                 "type": "array",
@@ -2973,7 +3386,8 @@
                   "description": "The classrooms that this student is enrolled in, along with metadata.",
                   "properties": {
                     "classroom": {
-                      "$ref": "#/components/schemas/Classroom"
+                      "type": "string",
+                      "description": "The ID of the classroom that this student is in."
                     },
                     "addedBy": {
                       "type": "string",
@@ -3001,6 +3415,10 @@
         "type": "object",
         "description": "A District Object",
         "properties": {
+          "id": {
+            "type" : "string",
+            "description": "The object id of the school"
+          },
           "name": {
             "type" : "string",
             "description": "The name of the district"
@@ -3027,61 +3445,16 @@
           "createdBy": {
             "type": "string",
             "description": "The username of the user that created the district. Not a reference in case the user is deleted."
-          },
-          "schools": {
-            "type": "array",
-            "description": "A list of all the schools within this district.",
-            "items": {
-              "$ref": "#/components/schemas/School"
-            }
-          },
-          "classrooms": {
-            "type": "array",
-            "description": "A list of all the classrooms within this district.",
-            "items": {
-              "$ref": "#/components/schemas/Classroom"
-            }
-          },
-          "admins": {
-            "type": "array",
-            "description": "A list of all the district admins within this district.",
-            "items": {
-              "$ref": "#/components/schemas/DistrictAdmin"
-            }
-          },
-          "sales": {
-            "type": "array",
-            "description": "A list of all the sales admins within this district.",
-            "items": {
-              "$ref": "#/components/schemas/Sales"
-            }
-          },
-          "schoolAdmins": {
-            "type": "array",
-            "description": "A list of all the school admins within this district.",
-            "items": {
-              "$ref": "#/components/schemas/SchoolAdmin"
-            }
-          },
-          "teachers": {
-            "type": "array",
-            "description": "A list of all the teachers within this district.",
-            "items": {
-              "$ref": "#/components/schemas/Teacher"
-            }
-          },
-          "students": {
-            "type": "array",
-            "description": "A list of all the students within this district.",
-            "items": {
-              "$ref": "#/components/schemas/Student"
-            }
           }
         }
       },
       "School": {
         "type": "object",
         "properties": {
+          "id": {
+            "type" : "string",
+            "description": "The object id of the school"
+          },
           "name": {
             "type" : "string",
             "description": "The name of the school"
@@ -3103,7 +3476,8 @@
             ]
           },
           "district": {
-            "$ref": "#/components/schemas/District"
+            "type": "string",
+            "description": "The ID of the district that this school is in."
           },
           "archived": {
             "type" : "boolean",
@@ -3114,7 +3488,7 @@
             "description": "The Course licenses provided to the school.",
             "items": {
               "properties": {
-                "course": {
+                "courseCode": {
                   "type": "string",
                   "description": "The tag for the course that this license is for"
                 },
@@ -3144,34 +3518,6 @@
           "createdBy": {
             "type": "string",
             "description": "The username of the user that created the school. Not a reference in case the user is deleted."
-          },
-          "classrooms": {
-            "type": "array",
-            "description": "A list of all the classrooms within this district.",
-            "items": {
-              "$ref": "#/components/schemas/Classroom"
-            }
-          },
-          "schoolAdmins": {
-            "type": "array",
-            "description": "A list of all the school admins within this school.",
-            "items": {
-              "$ref": "#/components/schemas/SchoolAdmin"
-            }
-          },
-          "teachers": {
-            "type": "array",
-            "description": "A list of all the teachers within this district.",
-            "items": {
-              "$ref": "#/components/schemas/Teacher"
-            }
-          },
-          "students": {
-            "type": "array",
-            "description": "A list of all the students within this district.",
-            "items": {
-              "$ref": "#/components/schemas/Student"
-            }
           }
         }
       },
@@ -3193,14 +3539,6 @@
               "displayName": {
                 "type": "string",
                 "description": "The custom display name for this course as defined on the license for that school."
-              },
-              "course": {
-                "description": "Virtual course field that is populated on request. the entire Course is not stored on the classroom. Referenced from code",
-                "allOf": [
-                  {
-                    "$ref": "#/components/schemas/Course"
-                  }
-                ]
               }
             }
           },
@@ -3212,7 +3550,8 @@
                 "description": "The name of the school, metadata in-case the school is deleted"
               },
               "_s": {
-                "$ref": "#/components/schemas/School"
+                "type" : "string",
+                "description": "The object id of the school"
               }
             }
           },
@@ -3224,7 +3563,8 @@
                 "description": "The name of the district, metadata in-case the district is deleted"
               },
               "_d": {
-                "$ref": "#/components/schemas/District"
+                "type" : "string",
+                "description": "The object id of the district"
               }
             }
           },
@@ -3238,7 +3578,8 @@
                   "description": "The username of the teacher, metadata in-case the teacher is deleted"
                 },
                 "_t": {
-                  "$ref": "#/components/schemas/Teacher"
+                  "type" : "string",
+                  "description": "The object id of the teacher"
                 },
                 "addedBy": {
                   "type": "string",
@@ -3257,7 +3598,8 @@
                   "description": "The username of the student, metadata in-case the student is deleted"
                 },
                 "_s": {
-                  "$ref": "#/components/schemas/Student"
+                  "type" : "string",
+                  "description": "The object id of the student"
                 },
                 "quizSubmissions": {
                   "type": "object",
@@ -3467,69 +3809,40 @@
               }
             }
           },
+          "videoURL": {
+            "type" : "string",
+            "description": "The url for the video that was created for this section",
+            "default": ""
+          },
+          "markdown": {
+            "type" : "string",
+            "description": "The markdown created for this section",
+            "default": ""
+          },
+          "questions": {
+            "type": "array",
+            "items": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/QuizQuestion"
+                }
+              ]
+            }
+          },
           "isPublished": {
             "type": "boolean",
             "description": "Wether this section is a draft or published version of a section"
           },
           "published": {
             "description": "If this is a draft section and it has been published atleast once, this holds the reference to the published version of the section",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Video"
-              },
-              {
-                "$ref": "#/components/schemas/Quiz"
-              },
-              {
-                "$ref": "#/components/schemas/Document"
-              },
-              {
-                "$ref": "#/components/schemas/Project"
-              }
-            ]
+            "$ref": "#/components/schemas/Section"
           },
           "draft": {
             "type": "object",
             "description": "If this is a published section, this holds the reference to the draft version of the section",
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Video"
-              },
-              {
-                "$ref": "#/components/schemas/Quiz"
-              },
-              {
-                "$ref": "#/components/schemas/Document"
-              },
-              {
-                "$ref": "#/components/schemas/Project"
-              }
-            ]
+            "$ref": "#/components/schemas/Section"
           }
         }
-      },
-      "Quiz": {
-        "description": "A representation of a QUIZ. Note that `Quiz` will be used as the discriminator value.",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Section"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "questions": {
-                "type": "array",
-                "items": {
-                  "allOf": [
-                    {
-                      "$ref": "#/components/schemas/QuizQuestion"
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        ]
       },
       "QuizQuestion": {
         "type": "object",
@@ -3575,65 +3888,6 @@
             }
           }
         }
-      },
-      "Video": {
-        "description": "A representation of a VIDEO. Note that `Video` will be used as the discriminator value.",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Section"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "videoURL": {
-                "type" : "string",
-                "description": "The url for the video that was created for this section",
-                "default": ""
-              },
-              "markdown": {
-                "type" : "string",
-                "description": "The markdown created for this section",
-                "default": ""
-              }
-            }
-          }
-        ]
-      },
-      "Document": {
-        "description": "A representation of a DOCUMENT. Note that `Document` will be used as the discriminator value.",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Section"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "markdown": {
-                "type" : "string",
-                "description": "The markdown created for this section",
-                "default": ""
-              }
-            }
-          }
-        ]
-      },
-      "Project": {
-        "description": "A representation of a PROJECT. Note that `Project` will be used as the discriminator value.",
-        "allOf": [
-          {
-            "$ref": "#/components/schemas/Section"
-          },
-          {
-            "type": "object",
-            "properties": {
-              "markdown": {
-                "type" : "string",
-                "description": "The markdown created for this section",
-                "default": ""
-              }
-            }
-          }
-        ]
       },
       "File": {
         "type": "object",
@@ -3782,20 +4036,7 @@
                 },
                 "_s": {
                   "description": "The reference to the actual section",
-                  "oneOf": [
-                    {
-                      "$ref": "#/components/schemas/Video"
-                    },
-                    {
-                      "$ref": "#/components/schemas/Document"
-                    },
-                    {
-                      "$ref": "#/components/schemas/Quiz"
-                    },
-                    {
-                      "$ref": "#/components/schemas/Project"
-                    }
-                  ]
+                  "$ref": "#/components/schemas/Section"
                 }
               }
             }
@@ -3967,6 +4208,27 @@
           }
         ]
       },
+      "DistrictsMap": {
+        "summary": "All Districts and schools used for the map",
+        "value": [
+          {
+            "id": "61ba41862cd3d7695e3231d2",
+            "name": "Test District",
+            "schools": [
+              {
+                  "name": "Test School",
+                  "district": "61c54045ec3aa479445ff3c5",
+                  "id": "61c54072ec3aa479445ff3e3"
+              }
+            ]
+          },
+          {
+            "id": "61ba418b9b2ad215b8676b3b",
+            "name": "Random District",
+            "schools": []
+          }
+        ]
+      },
       "CreateDistrict": {
         "summary": "Create District Example",
         "value": {
@@ -4038,13 +4300,8 @@
           "state": "CA",
           "type": "INTERNAL",
           "archived": false,
-          "admins": [
-            {
-              "id": "61ba43cf594dc1cfda1418b2",
-              "username": "Test@DA.com"
-            }
-          ],
           "_id": "61a8bf6dec89b042e2a1cabb",
+          "createdBy": "test@admin.com",
           "createdAt": "2021-12-02T12:43:25.721Z",
           "updatedAt": "2021-12-02T12:43:25.721Z",
           "__v": 0,
@@ -4054,76 +4311,96 @@
       "DistrictSchools": {
         "summary": "District Schools",
         "value": {
-          "name": "Test District",
-          "state": "CA",
-          "type": "INTERNAL",
-          "archived": false,
-          "admins": [
-            {
-              "id": "61ba43cf594dc1cfda1418b2",
-              "username": "Test@DA.com",
-              "firstname": "Test",
-              "lastname": "District-Admin"
-            }
-          ],
-          "sales": [
-            {
-              "id": "61ba446db7888edaa89ab9da",
-              "username": "Test@sales.com",
-              "firstname": "Test",
-              "lastname": "Sales"
-            }
-          ],
+          "id": "61c54045ec3aa479445ff3c5",
           "schools": [
             {
+              "id": "61c54072ec3aa479445ff3e3",
               "name": "Test School",
-              "state": "CA",
+              "state": "California",
+              "type": "HIGH",
+              "district": "61c54045ec3aa479445ff3c5",
+              "archived": false,
+              "licenses": [
+                {
+                  "courseCode": "TC101",
+                  "displayName": "",
+                  "isDemoLicense": false,
+                  "archived": false
+                }
+              ],
+              "createdAt": "2021-12-24T03:37:22.173Z",
+              "updatedAt": "2021-12-24T03:37:38.717Z",
+              "admins": [
+                {
+                  "id": "61ccecd34f2db99ccf5a16f3",
+                  "school": "61c54072ec3aa479445ff3e3",
+                  "activated": true
+                }
+              ],
               "teachers": [
                 {
-                  "id": "61ba45632bc909664da0fcbe",
-                  "username": "test@teacher.com",
-                  "activated": "true"
-                },
-                {
-                  "id": "61ba455ee5084e881d842383",
-                  "username": "second@teacher.com",
-                  "activated": "false"
+                  "id": "61cce40bb635c013736994ce",
+                  "school": "61c54072ec3aa479445ff3e3",
+                  "activated": true
                 }
               ],
               "students": [
                 {
-                  "id": "61ba4559f292610acf3c1c3e",
-                  "username": "ts12345",
-                  "activated": "true"
+                  "id": "61cceca4e8d12e4ea751706c",
+                  "school": "61c54072ec3aa479445ff3e3",
+                  "activated": true
                 },
                 {
-                  "id": "61ba4555699f1ae6b464d6ca",
-                  "username": "ss123456",
-                  "activated": "true"
+                  "id": "61cceca9cfe2d21d1c198755",
+                  "school": "61c54072ec3aa479445ff3e3",
+                  "activated": false
+                },
+                {
+                  "id": "61ccecae1332a9509b1144c8",
+                  "school": "61c54072ec3aa479445ff3e3",
+                  "activated": true
                 }
               ],
               "classrooms": [
                 {
-                  "id": "61ba4551d967d314c4574d07",
-                  "name": "Test Class"
-                }
-              ],
-              "licenses": [
-                {
-                  "course": "TC101",
-                  "displayName": "Test Course",
-                  "activation": "2021-11-17T02:07:14.034Z",
-                  "expiration": "2021-12-17T02:07:14.034Z",
-                  "isDemoLicense": true 
+                  "id": "61cce6d3775631305d96ee2e",
+                  "school": {
+                    "_s": "61c54072ec3aa479445ff3e3"
+                  }
                 }
               ]
             }
-          ],
-          "_id": "61a8bf6dec89b042e2a1cabb",
-          "createdAt": "2021-12-02T12:43:25.721Z",
-          "updatedAt": "2021-12-02T12:43:25.721Z",
-          "__v": 0,
-          "id": "61a8bf6dec89b042e2a1cabb"
+          ]
+        }
+      },
+      "DistrictTeachers": {
+        "summary": "District Teachers",
+        "value": {
+          "id": "61c54045ec3aa479445ff3c5",
+          "teachers": [
+              {
+                  "id": "61cce40bb635c013736994ce",
+                  "district": "61c54045ec3aa479445ff3c5",
+                  "school": "61c54072ec3aa479445ff3e3",
+                  "username": "teacher@masterycoding.com",
+                  "firstname": "Test",
+                  "lastname": "Teacher",
+                  "activated": true,
+                  "archived": false,
+                  "classrooms": [
+                      {
+                          "classroom": {
+                              "id": "61cce6d3775631305d96ee2e",
+                              "name": "Test Classroom"
+                          }
+                      }
+                  ],
+                  "createdAt": "2021-12-29T22:41:15.390Z",
+                  "updatedAt": "2021-12-30T00:05:39.204Z",
+                  "__v": 0,
+                  "lastLogin": "2021-12-30T00:05:39.200Z"
+              }
+          ]
         }
       },
       "Student": {
@@ -4265,8 +4542,18 @@
           "district": "61a8bf6dec89b042e2a1cabb",
           "archived": false,
           "_id": "61a8bfbea8c5badc02a5eab6",
-          "licenses": [],
+          "licenses": [
+            {
+              "courseCode": "TC101",
+              "displayName": "",
+              "activation": "2021-12-24T03:37:22.173Z",
+              "isDemoLicense": false,
+              "archived": false,
+              "createdBy": "test@admin.com"
+            }
+          ],
           "createdAt": "2021-12-02T12:44:46.471Z",
+          "createdBy": "test@admin.com",
           "updatedAt": "2021-12-02T12:44:46.471Z",
           "__v": 0,
           "id": "61a8bfbea8c5badc02a5eab6"
@@ -4309,12 +4596,30 @@
       "SchoolTeachers": {
         "summary": "School Teachers",
         "value": {
-          "id": "61ba50063b67a04e72990830",
+          "id": "61c54045ec3aa479445ff3c5",
           "teachers": [
-            {
-              "id": "61ba5001531a258dd88c9e54",
-              "username": "Test@teacher.com"
-            }
+              {
+                  "id": "61cce40bb635c013736994ce",
+                  "district": "61c54045ec3aa479445ff3c5",
+                  "school": "61c54072ec3aa479445ff3e3",
+                  "username": "teacher@masterycoding.com",
+                  "firstname": "Test",
+                  "lastname": "Teacher",
+                  "activated": true,
+                  "archived": false,
+                  "classrooms": [
+                      {
+                          "classroom": {
+                              "id": "61cce6d3775631305d96ee2e",
+                              "name": "Test Classroom"
+                          }
+                      }
+                  ],
+                  "createdAt": "2021-12-29T22:41:15.390Z",
+                  "updatedAt": "2021-12-30T00:05:39.204Z",
+                  "__v": 0,
+                  "lastLogin": "2021-12-30T00:05:39.200Z"
+              }
           ]
         }
       },
@@ -4327,6 +4632,49 @@
               "id": "61ba5001531a258dd88c9e54",
               "username": "ts12345"
             }
+          ]
+        }
+      },
+      "SchoolClassrooms": {
+        "summary": "School Students",
+        "value": {
+          "id": "61c54072ec3aa479445ff3e3",
+          "classrooms": [
+              {
+                  "id": "61cd08d9509f5325878a9c8f",
+                  "name": "Test Classroom",
+                  "courseInfo": {
+                      "code": "TC101",
+                      "displayName": ""
+                  },
+                  "school": {
+                      "name": "Test School",
+                      "_s": "61c54072ec3aa479445ff3e3"
+                  },
+                  "district": {
+                      "name": "Test District",
+                      "_d": "61c54045ec3aa479445ff3c5"
+                  },
+                  "teachers": [
+                      {
+                          "username": "teacher@masterycoding.com",
+                          "_t": "61cce40bb635c013736994ce",
+                          "addedBy": "teacher@masterycoding.com"
+                      }
+                  ],
+                  "archived": false,
+                  "createdBy": "teacher@masterycoding.com",
+                  "students": [
+                      {
+                          "username": "TS12345",
+                          "_s": "61cd084efb1a8abd58052484",
+                          "addedBy": "teacher@masterycoding.com"
+                      }
+                  ],
+                  "createdAt": "2021-12-30T01:18:17.060Z",
+                  "updatedAt": "2021-12-30T01:18:38.478Z",
+                  "__v": 0
+              }
           ]
         }
       },
